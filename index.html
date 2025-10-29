@@ -19,7 +19,7 @@
       color: #00d1ff;
       margin: 20px;
     }
-    input[type="file"], button {
+    input[type="file"], button, select {
       margin: 10px;
       padding: 10px 20px;
       background: #00d1ff;
@@ -29,13 +29,14 @@
       cursor: pointer;
       font-weight: bold;
     }
-    input[type="file"]:hover, button:hover {
+    input[type="file"]:hover, button:hover, select:hover {
       background: #00a4cc;
     }
     #controls {
       margin-top: 10px;
+      display: none;
     }
-    #opacityLabel {
+    label {
       font-size: 14px;
       margin-right: 8px;
     }
@@ -56,11 +57,25 @@
 <body>
   <h1>🧠 AI Background Remover</h1>
   <input type="file" id="fileInput" accept="image/*">
-  <div id="controls" style="display:none;">
-    <label id="opacityLabel">Smoothness:</label>
-    <input type="range" id="smoothness" min="0" max="1" step="0.05" value="0.7">
-    <label id="opacityLabel">Opacity:</label>
-    <input type="range" id="opacitySlider" min="0" max="1" step="0.05" value="1">
+  <div id="controls">
+    <div>
+      <label>Smoothness:</label>
+      <input type="range" id="smoothness" min="0.3" max="0.95" step="0.05" value="0.7">
+      <label>Opacity:</label>
+      <input type="range" id="opacitySlider" min="0" max="1" step="0.05" value="1">
+    </div>
+    <div>
+      <label>Background:</label>
+      <select id="bgSelect">
+        <option value="transparent">Transparent</option>
+        <option value="white">White</option>
+        <option value="black">Black</option>
+        <option value="blue">Blue</option>
+        <option value="green">Green</option>
+        <option value="custom">Upload Custom Image</option>
+      </select>
+      <input type="file" id="bgFile" accept="image/*" style="display:none;">
+    </div>
   </div>
 
   <div id="previewContainer">
@@ -76,7 +91,10 @@
     const opacitySlider = document.getElementById("opacitySlider");
     const smoothnessSlider = document.getElementById("smoothness");
     const controls = document.getElementById("controls");
-    let model, originalImg;
+    const bgSelect = document.getElementById("bgSelect");
+    const bgFile = document.getElementById("bgFile");
+
+    let model, originalImg, bgImg = null;
 
     async function loadModel() {
       document.querySelector("h1").innerText = "Loading AI Model... ⏳";
@@ -88,7 +106,6 @@
       });
       document.querySelector("h1").innerText = "🧠 AI Background Remover";
     }
-
     loadModel();
 
     fileInput.addEventListener("change", async (e) => {
@@ -111,18 +128,17 @@
     });
 
     async function processImage() {
+      if (!originalImg) return;
       const segmentation = await model.segmentPerson(originalImg, {
         internalResolution: 'high',
         segmentationThreshold: parseFloat(smoothnessSlider.value)
       });
 
-      const img = originalImg;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
       const imgCanvas = document.createElement("canvas");
       imgCanvas.width = canvas.width;
       imgCanvas.height = canvas.height;
       const imgCtx = imgCanvas.getContext("2d");
-      imgCtx.drawImage(img, 0, 0);
+      imgCtx.drawImage(originalImg, 0, 0);
 
       const imageData = imgCtx.getImageData(0, 0, canvas.width, canvas.height);
       const pixelData = imageData.data;
@@ -132,12 +148,38 @@
         if (person === 0) pixelData[i + 3] = 0;
       }
 
-      ctx.putImageData(imageData, 0, 0);
+      // Draw background first
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const bgType = bgSelect.value;
+      if (bgType === "white") ctx.fillStyle = "#fff";
+      else if (bgType === "black") ctx.fillStyle = "#000";
+      else if (bgType === "blue") ctx.fillStyle = "#007bff";
+      else if (bgType === "green") ctx.fillStyle = "#00cc66";
+      else ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (bgType !== "transparent") ctx.fillRect(0, 0, canvas.width, canvas.height);
+      if (bgType === "custom" && bgImg) ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+
+      // Draw foreground
       ctx.globalAlpha = parseFloat(opacitySlider.value);
+      ctx.putImageData(imageData, 0, 0);
+      ctx.globalAlpha = 1;
     }
 
     opacitySlider.addEventListener("input", processImage);
     smoothnessSlider.addEventListener("input", processImage);
+    bgSelect.addEventListener("change", () => {
+      if (bgSelect.value === "custom") bgFile.click();
+      else processImage();
+    });
+
+    bgFile.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      bgImg = new Image();
+      bgImg.src = URL.createObjectURL(file);
+      bgImg.onload = () => processImage();
+    });
 
     downloadBtn.addEventListener("click", () => {
       const link = document.createElement("a");
