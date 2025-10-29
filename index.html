@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JS Upload & Real-Time Display</title>
+<title>JS Upload Site</title>
 <style>
 body { font-family: Arial, sans-serif; margin:0; padding:0; }
 nav { background: #333; color: white; padding: 10px; display:flex; gap: 20px; }
@@ -11,9 +11,9 @@ nav a { color:white; text-decoration:none; cursor:pointer; }
 nav a.active { text-decoration: underline; }
 .container { padding: 20px; }
 input, button { padding: 8px; margin:5px 0; }
-.file-item { border:1px solid #ccc; padding:5px; margin:5px 0; display:flex; flex-direction: column; }
+.file-item { border:1px solid #ccc; padding:5px; margin:5px 0; }
 img.preview { max-width:150px; display:block; margin-top:5px; }
-button.download-file { margin-top: 5px; }
+button.download-btn { margin-top:5px; }
 </style>
 </head>
 <body>
@@ -58,7 +58,7 @@ menuLinks.forEach(link => {
     menuLinks.forEach(l=>l.classList.remove('active'));
     link.classList.add('active');
     currentMenu = link.dataset.menu;
-    renderFiles(); // Still show all files, menu used for highlight only
+    renderFiles();
   });
 });
 
@@ -70,17 +70,12 @@ uploadBtn.addEventListener('click', () => {
 
   const reader = new FileReader();
   reader.onload = function(e) {
-    filesData.push({
-      title: title,
-      name: file.name,
-      type: file.type,
-      data: e.target.result,
-      menu: currentMenu
-    });
+    filesData.push({title: title, name: file.name, data: e.target.result, menu: currentMenu});
     localStorage.setItem('filesData', JSON.stringify(filesData));
     fileTitle.value = '';
     fileInput.value = '';
-    renderFiles(); // Real-time display
+    alert("File uploaded successfully!");
+    renderFiles();
   };
   reader.readAsDataURL(file);
 });
@@ -89,34 +84,35 @@ uploadBtn.addEventListener('click', () => {
 function renderFiles() {
   const searchTerm = searchInput.value.toLowerCase();
   const filtered = filesData.filter(f => 
-      f.title.toLowerCase().includes(searchTerm) || f.name.toLowerCase().includes(searchTerm)
+      (f.menu === currentMenu || currentMenu==='home') &&
+      (f.title.toLowerCase().includes(searchTerm) || f.name.toLowerCase().includes(searchTerm))
   );
 
   fileList.innerHTML = '';
-  filtered.forEach(f => {
+  filtered.forEach((f, index) => {
     const div = document.createElement('div');
     div.classList.add('file-item');
-    div.innerHTML = `<strong>${f.title}</strong> (${f.menu})<br>${f.name}<br>`;
+    div.innerHTML = `<strong>${f.title}</strong><br>${f.name}<br>`;
 
-    // Image preview
-    if (f.type.startsWith('image/')) {
+    // Show image preview if image
+    if (f.data.startsWith('data:image')) {
       const img = document.createElement('img');
       img.src = f.data;
       img.classList.add('preview');
       div.appendChild(img);
     }
 
-    // Download file button
-    const btn = document.createElement('button');
-    btn.innerText = 'Download File';
-    btn.classList.add('download-file');
-    btn.addEventListener('click', () => {
+    // --- Download Button ---
+    const downloadBtn = document.createElement('button');
+    downloadBtn.textContent = 'Download';
+    downloadBtn.classList.add('download-btn');
+    downloadBtn.addEventListener('click', () => {
       const a = document.createElement('a');
       a.href = f.data;
       a.download = f.name;
       a.click();
     });
-    div.appendChild(btn);
+    div.appendChild(downloadBtn);
 
     fileList.appendChild(div);
   });
