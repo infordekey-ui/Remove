@@ -69,24 +69,25 @@ uploadBtn.addEventListener('click', () => {
   if (!file || !title) { alert("Please provide title and file!"); return; }
 
   const reader = new FileReader();
-
-  // Real-time preview while reading
   reader.onload = function(e) {
-    // Add new file to the **start** of array (newest first)
-    filesData.unshift({title: title, name: file.name, data: e.target.result, menu: currentMenu});
+    // Add new file to the end (so reverse shows newest first)
+    filesData.push({title: title, name: file.name, data: e.target.result, menu: currentMenu});
     localStorage.setItem('filesData', JSON.stringify(filesData));
     fileTitle.value = '';
     fileInput.value = '';
     renderFiles();
   };
-  
   reader.readAsDataURL(file);
 });
 
 // --- Render Files ---
 function renderFiles() {
   const searchTerm = searchInput.value.toLowerCase();
-  const filtered = filesData.filter(f => 
+
+  // Show newest uploads first
+  const sortedData = [...filesData].reverse();
+
+  const filtered = sortedData.filter(f => 
       (f.menu === currentMenu || currentMenu==='home') &&
       (f.title.toLowerCase().includes(searchTerm) || f.name.toLowerCase().includes(searchTerm))
   );
