@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Background Remover</title>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.0.5"></script>
   <style>
     body {
-      background: #101820;
+      background: #0d1117;
       color: #fff;
       font-family: Arial, sans-serif;
       text-align: center;
@@ -17,16 +17,27 @@
     }
     h1 {
       color: #00d1ff;
-      margin-top: 20px;
-    }
-    input[type="file"] {
       margin: 20px;
-      padding: 10px;
+    }
+    input[type="file"], button {
+      margin: 10px;
+      padding: 10px 20px;
       background: #00d1ff;
       color: #fff;
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      font-weight: bold;
+    }
+    input[type="file"]:hover, button:hover {
+      background: #00a4cc;
+    }
+    #controls {
+      margin-top: 10px;
+    }
+    #opacityLabel {
+      font-size: 14px;
+      margin-right: 8px;
     }
     #previewContainer {
       display: flex;
@@ -35,28 +46,23 @@
       gap: 15px;
     }
     canvas {
-      max-width: 90%;
+      max-width: 95%;
       border-radius: 10px;
       box-shadow: 0 0 15px rgba(0,0,0,0.5);
-    }
-    button {
-      background: #00d1ff;
-      border: none;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-    button:hover {
-      background: #00a4cc;
+      transition: 0.2s;
     }
   </style>
 </head>
 <body>
   <h1>🧠 AI Background Remover</h1>
   <input type="file" id="fileInput" accept="image/*">
+  <div id="controls" style="display:none;">
+    <label id="opacityLabel">Smoothness:</label>
+    <input type="range" id="smoothness" min="0" max="1" step="0.05" value="0.7">
+    <label id="opacityLabel">Opacity:</label>
+    <input type="range" id="opacitySlider" min="0" max="1" step="0.05" value="1">
+  </div>
+
   <div id="previewContainer">
     <canvas id="outputCanvas"></canvas>
     <button id="downloadBtn" style="display:none;">Download Transparent PNG</button>
@@ -67,14 +73,17 @@
     const canvas = document.getElementById("outputCanvas");
     const ctx = canvas.getContext("2d");
     const downloadBtn = document.getElementById("downloadBtn");
-    let model;
+    const opacitySlider = document.getElementById("opacitySlider");
+    const smoothnessSlider = document.getElementById("smoothness");
+    const controls = document.getElementById("controls");
+    let model, originalImg;
 
     async function loadModel() {
-      document.querySelector("h1").innerText = "Loading AI model...";
+      document.querySelector("h1").innerText = "Loading AI Model... ⏳";
       model = await bodyPix.load({
-        architecture: 'MobileNetV1',
-        outputStride: 16,
-        multiplier: 0.75,
+        architecture: 'ResNet50',
+        outputStride: 32,
+        multiplier: 1.0,
         quantBytes: 2
       });
       document.querySelector("h1").innerText = "🧠 AI Background Remover";
@@ -87,39 +96,53 @@
       if (!file || !model) return;
       const img = new Image();
       img.src = URL.createObjectURL(file);
+      originalImg = img;
 
       img.onload = async () => {
         canvas.width = img.width;
         canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
+        document.querySelector("h1").innerText = "Processing...";
 
-        document.querySelector("h1").innerText = "Processing... ⏳";
-
-        const segmentation = await model.segmentPerson(img, {
-          internalResolution: 'medium',
-          segmentationThreshold: 0.7,
-        });
-
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const pixelData = imageData.data;
-
-        for (let i = 0; i < pixelData.length; i += 4) {
-          const person = segmentation.data[i / 4];
-          if (person === 0) {
-            pixelData[i + 3] = 0; // make transparent
-          }
-        }
-
-        ctx.putImageData(imageData, 0, 0);
-        document.querySelector("h1").innerText = "Background Removed ✅";
+        await processImage();
+        controls.style.display = "block";
         downloadBtn.style.display = "inline-block";
+        document.querySelector("h1").innerText = "Background Removed ✅";
       };
     });
+
+    async function processImage() {
+      const segmentation = await model.segmentPerson(originalImg, {
+        internalResolution: 'high',
+        segmentationThreshold: parseFloat(smoothnessSlider.value)
+      });
+
+      const img = originalImg;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const imgCanvas = document.createElement("canvas");
+      imgCanvas.width = canvas.width;
+      imgCanvas.height = canvas.height;
+      const imgCtx = imgCanvas.getContext("2d");
+      imgCtx.drawImage(img, 0, 0);
+
+      const imageData = imgCtx.getImageData(0, 0, canvas.width, canvas.height);
+      const pixelData = imageData.data;
+
+      for (let i = 0; i < pixelData.length; i += 4) {
+        const person = segmentation.data[i / 4];
+        if (person === 0) pixelData[i + 3] = 0;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+      ctx.globalAlpha = parseFloat(opacitySlider.value);
+    }
+
+    opacitySlider.addEventListener("input", processImage);
+    smoothnessSlider.addEventListener("input", processImage);
 
     downloadBtn.addEventListener("click", () => {
       const link = document.createElement("a");
       link.download = "background_removed.png";
-      link.href = canvas.toDataURL();
+      link.href = canvas.toDataURL("image/png");
       link.click();
     });
   </script>
