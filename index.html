@@ -1,130 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Background Remover (Smooth Edge)</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.0.5"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Remove Background (U²-Net Smooth 100%)</title>
+  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
   <style>
     body {
       background: #0d1117;
       color: #fff;
-      font-family: Arial, sans-serif;
       text-align: center;
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
     }
-    h1 {
-      color: #00d1ff;
-      margin: 20px;
-    }
-    input[type="file"], button {
-      margin: 10px;
-      padding: 10px 20px;
-      background: #00d1ff;
-      color: #fff;
+    h1 { color: #00eaff; margin-top: 20px; }
+    input, button {
+      background: #00aaff;
+      color: white;
       border: none;
       border-radius: 8px;
+      padding: 10px 20px;
+      margin: 10px;
       cursor: pointer;
       font-weight: bold;
     }
-    input[type="file"]:hover, button:hover {
-      background: #00a4cc;
-    }
-    canvas {
+    canvas, img {
       max-width: 95%;
       border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      margin-top: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    .controls {
+      margin-top: 15px;
     }
   </style>
 </head>
 <body>
-  <h1>🧠 AI Background Remover (Smooth Edge)</h1>
+  <h1>🧠 AI Remove Background (Smooth 100%)</h1>
   <input type="file" id="fileInput" accept="image/*">
-  <canvas id="outputCanvas"></canvas>
-  <button id="downloadBtn" style="display:none;">Download Transparent PNG</button>
+  <div class="controls">
+    Smoothness: <input type="range" id="smoothness" min="0" max="1" step="0.05" value="0.6">
+    Opacity: <input type="range" id="opacity" min="0" max="1" step="0.05" value="1">
+  </div>
+  <canvas id="canvas"></canvas>
+  <br>
+  <button id="downloadBtn" style="display:none;">Download PNG</button>
 
   <script>
     const fileInput = document.getElementById("fileInput");
-    const canvas = document.getElementById("outputCanvas");
+    const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
     const downloadBtn = document.getElementById("downloadBtn");
-    let model;
+    const smoothSlider = document.getElementById("smoothness");
+    const opacitySlider = document.getElementById("opacity");
 
+    let session, imageBitmap, maskData;
+
+    // Load U²-Net model
     async function loadModel() {
       document.querySelector("h1").innerText = "Loading AI Model... ⏳";
-      model = await bodyPix.load({
-        architecture: 'ResNet50',
-        outputStride: 32,
-        multiplier: 1.0,
-        quantBytes: 2
-      });
-      document.querySelector("h1").innerText = "🧠 AI Background Remover (Smooth Edge)";
+      session = await ort.InferenceSession.create("https://huggingface.co/onnx-community/u2net/resolve/main/u2net.onnx");
+      document.querySelector("h1").innerText = "Model Ready ✅ Upload Image";
     }
+
     loadModel();
 
     fileInput.addEventListener("change", async (e) => {
       const file = e.target.files[0];
-      if (!file || !model) return;
-      const img = new Image();
-      img.src = URL.createObjectURL(file);
+      if (!file || !session) return;
+      imageBitmap = await createImageBitmap(file);
 
-      img.onload = async () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        document.querySelector("h1").innerText = "Processing...";
+      canvas.width = imageBitmap.width;
+      canvas.height = imageBitmap.height;
+      ctx.drawImage(imageBitmap, 0, 0);
 
-        const segmentation = await model.segmentPerson(img, {
-          internalResolution: 'high',
-          segmentationThreshold: 0.7
-        });
+      document.querySelector("h1").innerText = "Removing Background... 🧠";
 
-        // make soft mask
-        const maskBackground = true;
-        const foregroundColor = {r:0, g:0, b:0, a:0};
-        const backgroundColor = {r:0, g:0, b:0, a:255};
-        const mask = bodyPix.toMask(
-          segmentation,
-          foregroundColor,
-          backgroundColor,
-          maskBackground
-        );
+      const tensor = await imageToTensor(imageBitmap);
+      const feeds = { input: tensor };
+      const results = await session.run(feeds);
+      const output = results[Object.keys(results)[0]];
+      maskData = new Float32Array(output.data);
 
-        const offCanvas = document.createElement("canvas");
-        offCanvas.width = img.width;
-        offCanvas.height = img.height;
-        const offCtx = offCanvas.getContext("2d");
-
-        // Draw blurred mask
-        offCtx.putImageData(mask, 0, 0);
-        offCtx.filter = "blur(8px)"; // soften edge 8px
-        offCtx.drawImage(offCanvas, 0, 0);
-
-        const maskData = offCtx.getImageData(0, 0, img.width, img.height);
-        const imgCanvas = document.createElement("canvas");
-        imgCanvas.width = img.width;
-        imgCanvas.height = img.height;
-        const imgCtx = imgCanvas.getContext("2d");
-        imgCtx.drawImage(img, 0, 0);
-        const imgData = imgCtx.getImageData(0, 0, img.width, img.height);
-
-        const d = imgData.data;
-        const m = maskData.data;
-        for (let i = 0; i < d.length; i += 4) {
-          const alpha = m[i + 3] / 255;
-          d[i + 3] = Math.min(d[i + 3], alpha * 255);
-        }
-
-        ctx.putImageData(imgData, 0, 0);
-        document.querySelector("h1").innerText = "Background Removed ✅ (Smooth)";
-        downloadBtn.style.display = "inline-block";
-      };
+      drawMaskedImage();
+      document.querySelector("h1").innerText = "✅ Background Removed (Smooth 100%)";
+      downloadBtn.style.display = "inline-block";
     });
+
+    smoothSlider.addEventListener("input", drawMaskedImage);
+    opacitySlider.addEventListener("input", drawMaskedImage);
+
+    function drawMaskedImage() {
+      if (!maskData || !imageBitmap) return;
+      const smooth = parseFloat(smoothSlider.value);
+      const opacity = parseFloat(opacitySlider.value);
+
+      const imgW = imageBitmap.width;
+      const imgH = imageBitmap.height;
+      const maskW = Math.sqrt(maskData.length);
+      const maskH = maskW;
+      const maskCanvas = document.createElement("canvas");
+      maskCanvas.width = maskW;
+      maskCanvas.height = maskH;
+      const mctx = maskCanvas.getContext("2d");
+      const maskImg = mctx.createImageData(maskW, maskH);
+      for (let i = 0; i < maskData.length; i++) {
+        const v = maskData[i] * 255;
+        maskImg.data[i * 4 + 0] = v;
+        maskImg.data[i * 4 + 1] = v;
+        maskImg.data[i * 4 + 2] = v;
+        maskImg.data[i * 4 + 3] = 255;
+      }
+      mctx.putImageData(maskImg, 0, 0);
+
+      // draw original image
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.globalAlpha = opacity;
+      ctx.drawImage(imageBitmap, 0, 0);
+
+      // apply mask (with smooth edges)
+      ctx.globalCompositeOperation = "destination-in";
+      ctx.filter = `blur(${smooth * 10}px)`;
+      ctx.drawImage(maskCanvas, 0, 0, canvas.width, canvas.height);
+      ctx.filter = "none";
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = 1;
+    }
+
+    async function imageToTensor(img) {
+      const tmpCanvas = document.createElement("canvas");
+      const size = 320; // model input size
+      tmpCanvas.width = size;
+      tmpCanvas.height = size;
+      const tctx = tmpCanvas.getContext("2d");
+      tctx.drawImage(img, 0, 0, size, size);
+      const imgData = tctx.getImageData(0, 0, size, size);
+      const data = Float32Array.from(imgData.data).filter((_, i) => i % 4 !== 3);
+      const tensor = new ort.Tensor('float32', new Float32Array(size * size * 3), [1, 3, size, size]);
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          for (let c = 0; c < 3; c++) {
+            tensor.data[c * size * size + y * size + x] = data[(y * size + x) * 3 + c] / 255;
+          }
+        }
+      }
+      return tensor;
+    }
 
     downloadBtn.addEventListener("click", () => {
       const link = document.createElement("a");
-      link.download = "background_removed.png";
+      link.download = "removed_background.png";
       link.href = canvas.toDataURL("image/png");
       link.click();
     });
