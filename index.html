@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mini Facebook Shop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f0f2f5; }
+    header {
+      background: #4267B2;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+    header h1 {
+      font-size: 20px;
+      margin: 0;
+    }
+    header nav a {
+      color: white;
+      margin: 0 10px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    #addBtn {
+      background: #1877F2;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    #searchBox {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 100%;
+      max-width: 300px;
+      margin-top: 10px;
+    }
+
+    .product {
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 15px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .product img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-right: 15px;
+    }
+
+    .product-info {
+      flex: 1;
+    }
+
+    .product-info h3 {
+      margin: 0 0 5px;
+    }
+
+    .telegram-btn {
+      display: inline-block;
+      background: #0088cc;
+      color: white;
+      padding: 8px 15px;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    /* Modal form */
+    #addForm {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+    }
+
+    .form-box {
+      background: white;
+      margin: 50px auto;
+      padding: 20px;
+      max-width: 400px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .form-box input, .form-box textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .form-box button {
+      background: #42b72a;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .close-btn {
+      float: right;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    @media(max-width: 600px) {
+      .product { flex-direction: column; align-items: center; }
+      .product img { margin-bottom: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>MyFaceShop</h1>
+    <nav>
+      <a href="#" onclick="showHome()">Home</a>
+      <a href="#">Shop</a>
+    </nav>
+  </header>
+
+  <div class="container" id="home">
+    <div class="top-bar">
+      <button id="addBtn" onclick="toggleForm()">+ Add Product</button>
+      <input type="text" id="searchBox" placeholder="Search..." onkeyup="filterProducts()">
+    </div>
+    <div id="productList"></div>
+  </div>
+
+  <!-- Modal Add Form -->
+  <div id="addForm">
+    <div class="form-box">
+      <span class="close-btn" onclick="toggleForm()">✖</span>
+      <h2>Add New Product</h2>
+      <form id="productForm" enctype="multipart/form-data">
+        <input type="file" name="photo" required><br>
+        <input type="text" name="name" placeholder="Product Name" required>
+        <textarea name="description" placeholder="Description" required></textarea>
+        <input type="number" name="price" placeholder="Price" required>
+        <input type="url" name="telegram" placeholder="Telegram Link (optional)">
+        <button type="submit">Save Product</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function toggleForm() {
+      const form = document.getElementById('addForm');
+      form.style.display = form.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function showHome() {
+      document.getElementById('home').style.display = 'block';
+    }
+
+    document.getElementById("productForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      let formData = new FormData(this);
+      fetch("save_product.php", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.text())
+      .then(msg => {
+        alert(msg);
+        loadProducts();
+        document.getElementById("productForm").reset();
+        toggleForm();
+      });
+    });
+
+    function loadProducts() {
+      fetch("store.json")
+        .then(res => res.json())
+        .then(data => {
+          let html = '';
+          data.forEach(p => {
+            html += `
+              <div class="product">
+                <img src="${p.photo}" alt="Product">
+                <div class="product-info">
+                  <h3>${p.name}</h3>
+                  <p>${p.description}</p>
+                  <strong>$${p.price}</strong><br><br>
+                  ${p.telegram ? `<a href="${p.telegram}" target="_blank" class="telegram-btn">Message Seller</a>` : ''}
+                </div>
+              </div>
+            `;
+          });
+          document.getElementById("productList").innerHTML = html;
+        });
+    }
+
+    function filterProducts() {
+      let keyword = document.getElementById("searchBox").value.toLowerCase();
+      let items = document.querySelectorAll(".product");
+      items.forEach(item => {
+        item.style.display = item.textContent.toLowerCase().includes(keyword) ? "flex" : "none";
+      });
+    }
+
+    loadProducts();
+  </script>
+
+</body>
+</html>
