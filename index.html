@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JS Upload & Download Files</title>
+<title>JS Upload & Real-Time Display</title>
 <style>
 body { font-family: Arial, sans-serif; margin:0; padding:0; }
 nav { background: #333; color: white; padding: 10px; display:flex; gap: 20px; }
@@ -58,7 +58,7 @@ menuLinks.forEach(link => {
     menuLinks.forEach(l=>l.classList.remove('active'));
     link.classList.add('active');
     currentMenu = link.dataset.menu;
-    renderFiles();
+    renderFiles(); // Still show all files, menu used for highlight only
   });
 });
 
@@ -80,8 +80,7 @@ uploadBtn.addEventListener('click', () => {
     localStorage.setItem('filesData', JSON.stringify(filesData));
     fileTitle.value = '';
     fileInput.value = '';
-    alert("File uploaded successfully!");
-    renderFiles();
+    renderFiles(); // Real-time display
   };
   reader.readAsDataURL(file);
 });
@@ -90,17 +89,16 @@ uploadBtn.addEventListener('click', () => {
 function renderFiles() {
   const searchTerm = searchInput.value.toLowerCase();
   const filtered = filesData.filter(f => 
-      (f.menu === currentMenu || currentMenu==='home') &&
-      (f.title.toLowerCase().includes(searchTerm) || f.name.toLowerCase().includes(searchTerm))
+      f.title.toLowerCase().includes(searchTerm) || f.name.toLowerCase().includes(searchTerm)
   );
 
   fileList.innerHTML = '';
-  filtered.forEach((f, index) => {
+  filtered.forEach(f => {
     const div = document.createElement('div');
     div.classList.add('file-item');
-    div.innerHTML = `<strong>${f.title}</strong><br>${f.name}<br>`;
-    
-    // If image, show preview
+    div.innerHTML = `<strong>${f.title}</strong> (${f.menu})<br>${f.name}<br>`;
+
+    // Image preview
     if (f.type.startsWith('image/')) {
       const img = document.createElement('img');
       img.src = f.data;
