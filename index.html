@@ -1,240 +1,488 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Mini Facebook Shop</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Background Remover — Live Preview & Opacity</title>
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; background: #f0f2f5; }
-    header {
-      background: #4267B2;
-      color: white;
-      padding: 10px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 999;
+    :root {
+      --bg: #0f1724;
+      --card: #0b1220;
+      --accent: #06b6d4;
+      --muted: #9aa7b2;
     }
-    header h1 {
-      font-size: 20px;
-      margin: 0;
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+    body{background:linear-gradient(180deg,#071022 0%, #07172b 100%);color:#e6eef6;display:flex;align-items:center;justify-content:center;padding:18px;}
+    .app{
+      width:100%;max-width:1100px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:18px;box-shadow:0 8px 40px rgba(2,6,23,0.6);
+      display:grid;grid-template-columns:430px 1fr;gap:18px;
     }
-    header nav a {
-      color: white;
-      margin: 0 10px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    .container {
-      padding: 20px;
-      max-width: 900px;
-      margin: auto;
-    }
-
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
-      flex-wrap: wrap;
-    }
-
-    #addBtn {
-      background: #1877F2;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    #searchBox {
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      width: 100%;
-      max-width: 300px;
-      margin-top: 10px;
-    }
-
-    .product {
-      background: white;
-      border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      padding: 15px;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: flex-start;
-    }
-
-    .product img {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 6px;
-      margin-right: 15px;
-    }
-
-    .product-info {
-      flex: 1;
-    }
-
-    .product-info h3 {
-      margin: 0 0 5px;
-    }
-
-    .telegram-btn {
-      display: inline-block;
-      background: #0088cc;
-      color: white;
-      padding: 8px 15px;
-      text-decoration: none;
-      border-radius: 5px;
-      font-weight: bold;
-    }
-
-    /* Modal form */
-    #addForm {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1000;
-    }
-
-    .form-box {
-      background: white;
-      margin: 50px auto;
-      padding: 20px;
-      max-width: 400px;
-      border-radius: 8px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
-
-    .form-box input, .form-box textarea {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    .form-box button {
-      background: #42b72a;
-      color: white;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .close-btn {
-      float: right;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    @media(max-width: 600px) {
-      .product { flex-direction: column; align-items: center; }
-      .product img { margin-bottom: 10px; }
+    header{grid-column:1/-1;display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+    header h1{font-size:18px;margin:0;}
+    header p{margin:0;color:var(--muted);font-size:13px;}
+    .panel{background:rgba(255,255,255,0.02);padding:14px;border-radius:10px;}
+    .controls{display:flex;flex-direction:column;gap:12px;}
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px;}
+    input[type="file"]{color:transparent;}
+    .row{display:flex;gap:8px;align-items:center;}
+    button{background:var(--accent);border:none;color:#04202a;padding:10px 12px;border-radius:8px;font-weight:600;cursor:pointer;}
+    button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:600;}
+    .small{font-size:13px;padding:8px 10px;border-radius:8px;}
+    .previewWrap{display:grid;grid-template-rows:auto 1fr;gap:8px;height:100%;}
+    .canvasWrapper{background:#071226;border-radius:10px;padding:8px;display:flex;align-items:center;justify-content:center;height:100%;}
+    canvas, video{max-width:100%;border-radius:6px;display:block;}
+    .sliderRow{display:flex;align-items:center;gap:8px;}
+    .muted{color:var(--muted);font-size:13px;}
+    .footer{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;padding-top:8px;}
+    .tips{color:var(--muted);font-size:13px;}
+    .optionRow{display:flex;gap:8px;flex-wrap:wrap;}
+    .badge{background:#06202a;color:#9fecec;padding:6px 8px;border-radius:999px;font-size:12px;}
+    input[type="range"]{width:100%;}
+    select, input[type="number"]{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:8px;color:inherit;}
+    .center{display:flex;align-items:center;justify-content:center;}
+    @media (max-width:980px){
+      .app{grid-template-columns:1fr;max-width:900px;}
     }
   </style>
 </head>
 <body>
+  <main class="app" role="main">
+    <header>
+      <div>
+        <h1>AI Background Remover — Live Preview (single file)</h1>
+        <p>Upload a photo or use your webcam. Control background opacity or remove it completely. Client-side — runs in your browser.</p>
+      </div>
+      <div style="margin-left:auto" class="badge">Powered by BodyPix (TensorFlow.js)</div>
+    </header>
 
-  <header>
-    <h1>MyFaceShop</h1>
-    <nav>
-      <a href="#" onclick="showHome()">Home</a>
-      <a href="#">Shop</a>
-    </nav>
-  </header>
+    <section class="panel">
+      <div class="controls">
+        <div>
+          <label>Upload photo (PNG/JPG) — or choose Webcam</label>
+          <div class="row">
+            <input id="fileInput" type="file" accept="image/*" />
+            <button id="startWebcam" class="small">Start Webcam</button>
+            <button id="stopWebcam" class="small ghost">Stop Webcam</button>
+          </div>
+        </div>
 
-  <div class="container" id="home">
-    <div class="top-bar">
-      <button id="addBtn" onclick="toggleForm()">+ Add Product</button>
-      <input type="text" id="searchBox" placeholder="Search..." onkeyup="filterProducts()">
+        <div>
+          <label>Preview mode</label>
+          <div class="optionRow">
+            <button id="modeRemove" class="small">Remove Background</button>
+            <button id="modeOpacity" class="small ghost">Fade Background (Opacity)</button>
+            <button id="modeMask" class="small ghost">Show Mask</button>
+          </div>
+        </div>
+
+        <div>
+          <label>Background opacity (when "Fade Background" is selected)</label>
+          <div class="sliderRow">
+            <input id="bgOpacity" type="range" min="0" max="100" value="0" />
+            <div class="muted" id="bgOpacityVal">0%</div>
+          </div>
+        </div>
+
+        <div>
+          <label>Model quality & speed</label>
+          <div class="row">
+            <select id="architecture">
+              <option value="MobileNetV1">MobileNetV1 (faster)</option>
+              <option value="ResNet50">ResNet50 (slower, more accurate)</option>
+            </select>
+            <select id="multiplier">
+              <option value="0.50">Multiplier 0.50 (fast)</option>
+              <option value="0.75" selected>Multiplier 0.75</option>
+              <option value="1.00">Multiplier 1.00 (higher quality)</option>
+            </select>
+          </div>
+          <div style="margin-top:8px" class="muted">Tip: lower multiplier -> faster but lower quality.</div>
+        </div>
+
+        <div>
+          <label>Processing size (smaller -> faster)</label>
+          <div class="row">
+            <input id="processWidth" type="number" min="128" max="1024" value="640" />
+            <div class="muted">px width</div>
+          </div>
+        </div>
+
+        <div>
+          <label>Actions</label>
+          <div class="row">
+            <button id="downloadPng">Download PNG (transparent background)</button>
+            <button id="snapshot" class="ghost">Snapshot Preview</button>
+          </div>
+        </div>
+
+        <div>
+          <label>Model status</label>
+          <div id="status" class="muted">Model not loaded.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel previewWrap">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div class="muted">Live Preview</div>
+        <div class="muted">FPS: <span id="fps">0</span></div>
+      </div>
+
+      <div class="canvasWrapper center" style="min-height:360px;">
+        <video id="inputVideo" autoplay playsinline style="display:none;"></video>
+        <canvas id="outputCanvas"></canvas>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div class="tips">Quick Khmer instructions: អាប់ឡូតរូប ឬបើកកាមេរ៉ា → ជ្រើសរើសម៉ូដ (លុប/បាញ់ភ្លឺ) → ទាញចុច Download។</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="muted">Model: <span id="modelName">—</span></div>
+      </div>
     </div>
-    <div id="productList"></div>
-  </div>
+  </main>
 
-  <!-- Modal Add Form -->
-  <div id="addForm">
-    <div class="form-box">
-      <span class="close-btn" onclick="toggleForm()">✖</span>
-      <h2>Add New Product</h2>
-      <form id="productForm" enctype="multipart/form-data">
-        <input type="file" name="photo" required><br>
-        <input type="text" name="name" placeholder="Product Name" required>
-        <textarea name="description" placeholder="Description" required></textarea>
-        <input type="number" name="price" placeholder="Price" required>
-        <input type="url" name="telegram" placeholder="Telegram Link (optional)">
-        <button type="submit">Save Product</button>
-      </form>
-    </div>
-  </div>
+  <!-- TensorFlow.js + BodyPix from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.0.5/dist/body-pix.min.js"></script>
 
   <script>
-    function toggleForm() {
-      const form = document.getElementById('addForm');
-      form.style.display = form.style.display === 'block' ? 'none' : 'block';
-    }
+    // Elements
+    const fileInput = document.getElementById('fileInput');
+    const startWebcamBtn = document.getElementById('startWebcam');
+    const stopWebcamBtn = document.getElementById('stopWebcam');
+    const inputVideo = document.getElementById('inputVideo');
+    const outputCanvas = document.getElementById('outputCanvas');
+    const ctx = outputCanvas.getContext('2d', { alpha: true });
 
-    function showHome() {
-      document.getElementById('home').style.display = 'block';
-    }
+    const bgOpacity = document.getElementById('bgOpacity');
+    const bgOpacityVal = document.getElementById('bgOpacityVal');
+    const statusEl = document.getElementById('status');
+    const fpsEl = document.getElementById('fps');
+    const downloadBtn = document.getElementById('downloadPng');
+    const snapshotBtn = document.getElementById('snapshot');
+    const processWidthInput = document.getElementById('processWidth');
 
-    document.getElementById("productForm").addEventListener("submit", function (e) {
-      e.preventDefault();
-      let formData = new FormData(this);
-      fetch("save_product.php", {
-        method: "POST",
-        body: formData
-      })
-      .then(res => res.text())
-      .then(msg => {
-        alert(msg);
-        loadProducts();
-        document.getElementById("productForm").reset();
-        toggleForm();
-      });
+    const architectureSelect = document.getElementById('architecture');
+    const multiplierSelect = document.getElementById('multiplier');
+
+    const modeRemove = document.getElementById('modeRemove');
+    const modeOpacity = document.getElementById('modeOpacity');
+    const modeMask = document.getElementById('modeMask');
+
+    const modelNameEl = document.getElementById('modelName');
+
+    let model = null;
+    let stream = null;
+    let currentImage = null; // HTMLImageElement if uploaded
+    let processing = false;
+    let lastT = performance.now();
+    let frames = 0;
+    let lastFPSUpdate = performance.now();
+
+    // default mode: remove
+    let previewMode = 'remove'; // 'remove' | 'opacity' | 'mask'
+    let rafId = null;
+
+    function setMode(mode) {
+      previewMode = mode;
+      modeRemove.classList.toggle('ghost', mode !== 'remove');
+      modeOpacity.classList.toggle('ghost', mode !== 'opacity');
+      modeMask.classList.toggle('ghost', mode !== 'mask');
+    }
+    setMode('remove');
+
+    // update bg opacity display
+    bgOpacity.addEventListener('input', () => {
+      bgOpacityVal.innerText = bgOpacity.value + '%';
     });
 
-    function loadProducts() {
-      fetch("store.json")
-        .then(res => res.json())
-        .then(data => {
-          let html = '';
-          data.forEach(p => {
-            html += `
-              <div class="product">
-                <img src="${p.photo}" alt="Product">
-                <div class="product-info">
-                  <h3>${p.name}</h3>
-                  <p>${p.description}</p>
-                  <strong>$${p.price}</strong><br><br>
-                  ${p.telegram ? `<a href="${p.telegram}" target="_blank" class="telegram-btn">Message Seller</a>` : ''}
-                </div>
-              </div>
-            `;
-          });
-          document.getElementById("productList").innerHTML = html;
+    // load model with current settings
+    async function loadModel() {
+      statusEl.innerText = 'Loading model...';
+      const architecture = architectureSelect.value === 'ResNet50' ? 'ResNet50' : 'MobileNetV1';
+      const multiplier = parseFloat(multiplierSelect.value);
+      // configure
+      const netConfig = architecture === 'ResNet50' ? {architecture: 'ResNet50'} : {
+        architecture: 'MobileNetV1',
+        outputStride: 16,
+        multiplier: multiplier,
+        quantBytes: 2
+      };
+      try {
+        model = await bodyPix.load(netConfig);
+        statusEl.innerText = 'Model loaded.';
+        modelNameEl.innerText = architecture + ' • mult=' + multiplier;
+      } catch (err) {
+        console.error(err);
+        statusEl.innerText = 'Error loading model: ' + err.message;
+      }
+    }
+
+    // re-load model when settings change
+    architectureSelect.addEventListener('change', () => { loadModel(); });
+    multiplierSelect.addEventListener('change', () => { if (architectureSelect.value !== 'ResNet50') loadModel(); });
+
+    // initial model load
+    loadModel();
+
+    // File upload
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      stopWebcam();
+      const img = new Image();
+      img.onload = () => {
+        currentImage = img;
+        inputVideo.style.display = 'none';
+        startProcessing();
+      };
+      img.src = URL.createObjectURL(file);
+    });
+
+    // Webcam
+    async function startWebcam() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 }, audio: false });
+        inputVideo.srcObject = stream;
+        inputVideo.style.display = 'block';
+        inputVideo.play();
+        currentImage = null;
+        startProcessing();
+      } catch (err) {
+        alert('Webcam error: ' + err.message);
+      }
+    }
+    function stopWebcam() {
+      if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+        stream = null;
+      }
+      inputVideo.pause();
+      inputVideo.srcObject = null;
+      inputVideo.style.display = 'none';
+    }
+    startWebcamBtn.addEventListener('click', startWebcam);
+    stopWebcamBtn.addEventListener('click', () => { stopWebcam(); });
+
+    // mode buttons
+    modeRemove.addEventListener('click', () => setMode('remove'));
+    modeOpacity.addEventListener('click', () => setMode('opacity'));
+    modeMask.addEventListener('click', () => setMode('mask'));
+
+    // snapshot (freeze and download current canvas as an image)
+    snapshotBtn.addEventListener('click', () => {
+      const url = outputCanvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'snapshot.png';
+      a.click();
+    });
+
+    // download transparent PNG (transparent background)
+    downloadBtn.addEventListener('click', () => {
+      // Ensure we're producing an RGBA output where background is transparent
+      const url = outputCanvas.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'bg_removed.png';
+      a.click();
+    });
+
+    // core processing loop
+    async function startProcessing() {
+      if (!model) {
+        statusEl.innerText = 'Model is not loaded yet. Loading...';
+        await loadModel();
+      }
+      if (processing) return;
+      processing = true;
+      statusEl.innerText = 'Processing...';
+      frames = 0;
+      lastFPSUpdate = performance.now();
+      loop();
+    }
+
+    async function loop() {
+      if (!processing) return;
+      // get source dims
+      let srcW, srcH;
+      let sourceElement;
+      if (currentImage) {
+        sourceElement = currentImage;
+        srcW = currentImage.naturalWidth;
+        srcH = currentImage.naturalHeight;
+      } else if (inputVideo && inputVideo.videoWidth > 0) {
+        sourceElement = inputVideo;
+        srcW = inputVideo.videoWidth;
+        srcH = inputVideo.videoHeight;
+      } else {
+        // wait when no source
+        rafId = requestAnimationFrame(loop);
+        return;
+      }
+
+      // compute scale to requested processing width
+      const procW = Math.max(128, Math.min(1024, parseInt(processWidthInput.value) || 640));
+      const scale = procW / srcW;
+      const procH = Math.max(128, Math.round(srcH * scale));
+
+      outputCanvas.width = srcW;
+      outputCanvas.height = srcH;
+
+      try {
+        // segment person
+        // use segmentation settings favoring speed + decent quality
+        const segmentation = await model.segmentPerson(sourceElement, {
+          internalResolution: 'medium', // 'low'|'medium'|'high'
+          segmentationThreshold: 0.7,
+          maxDetections: 1,
+          scoreThreshold: 0.3,
+          // if using MobileNet, multiplier set at load time
         });
+
+        // get mask image data (Uint8ClampedArray)
+        const mask = bodyPix.toMask(segmentation);
+
+        // draw original to an offscreen canvas to sample pixels
+        const off = document.createElement('canvas');
+        off.width = srcW; off.height = srcH;
+        const offCtx = off.getContext('2d');
+        offCtx.drawImage(sourceElement, 0, 0, srcW, srcH);
+
+        const srcPixels = offCtx.getImageData(0, 0, srcW, srcH);
+        const maskPixels = mask.data; // RGBA mask (0..255)
+
+        // Prepare output
+        const outImage = ctx.createImageData(srcW, srcH);
+        const bgOpacityVal = parseInt(bgOpacity.value) / 100;
+
+        // Iterate pixel by pixel (this is the heavy part)
+        // maskPixels is RGBA where mask alpha 255 for person, 0 for background (approx)
+        for (let i = 0; i < srcPixels.data.length; i += 4) {
+          const maskAlpha = maskPixels[i + 3] / 255; // 0..1
+          const srcR = srcPixels.data[i], srcG = srcPixels.data[i + 1], srcB = srcPixels.data[i + 2], srcA = srcPixels.data[i + 3];
+
+          if (previewMode === 'mask') {
+            // show mask: person white, background black (with original as overlay)
+            const m = maskAlpha > 0.5 ? 255 : 0;
+            outImage.data[i] = m;
+            outImage.data[i + 1] = m;
+            outImage.data[i + 2] = m;
+            outImage.data[i + 3] = 255;
+          } else if (previewMode === 'remove') {
+            // person retains original pixel, background fully transparent
+            if (maskAlpha > 0.5) {
+              outImage.data[i] = srcR;
+              outImage.data[i + 1] = srcG;
+              outImage.data[i + 2] = srcB;
+              outImage.data[i + 3] = srcA;
+            } else {
+              outImage.data[i] = 0;
+              outImage.data[i + 1] = 0;
+              outImage.data[i + 2] = 0;
+              outImage.data[i + 3] = 0; // transparent
+            }
+          } else if (previewMode === 'opacity') {
+            // background is still visible, but faded according to bgOpacityVal
+            if (maskAlpha > 0.5) {
+              // keep person fully opaque
+              outImage.data[i] = srcR;
+              outImage.data[i + 1] = srcG;
+              outImage.data[i + 2] = srcB;
+              outImage.data[i + 3] = srcA;
+            } else {
+              // fade background by mixing with transparent (reduce alpha)
+              outImage.data[i] = srcR;
+              outImage.data[i + 1] = srcG;
+              outImage.data[i + 2] = srcB;
+              // set alpha proportional to (1 - bgOpacityVal)
+              outImage.data[i + 3] = Math.round(255 * Math.max(0, 1 - bgOpacityVal));
+            }
+          }
+        }
+
+        // Clear canvas and draw a checker background to show transparency in preview
+        // draw checkerboard
+        drawCheckerboard(ctx, srcW, srcH);
+
+        // put the image data on top
+        ctx.putImageData(outImage, 0, 0);
+
+      } catch (err) {
+        console.error('Processing error', err);
+        statusEl.innerText = 'Processing error: ' + err.message;
+      }
+
+      // FPS calculation
+      frames++;
+      const now = performance.now();
+      if (now - lastFPSUpdate > 500) {
+        const fps = Math.round((frames * 1000) / (now - lastFPSUpdate));
+        fpsEl.innerText = fps;
+        frames = 0;
+        lastFPSUpdate = now;
+      }
+
+      rafId = requestAnimationFrame(loop);
     }
 
-    function filterProducts() {
-      let keyword = document.getElementById("searchBox").value.toLowerCase();
-      let items = document.querySelectorAll(".product");
-      items.forEach(item => {
-        item.style.display = item.textContent.toLowerCase().includes(keyword) ? "flex" : "none";
-      });
+    // draw checkerboard for transparency cue
+    function drawCheckerboard(context, w, h) {
+      const size = 16;
+      context.save();
+      context.clearRect(0, 0, w, h);
+      for (let y = 0; y < h; y += size) {
+        for (let x = 0; x < w; x += size) {
+          const isLight = ((x / size) + (y / size)) % 2 === 0;
+          context.fillStyle = isLight ? '#e6eef680' : '#b6c2c880';
+          context.fillRect(x, y, size, size);
+        }
+      }
+      context.restore();
     }
 
-    loadProducts();
+    // stop processing
+    function stopProcessing() {
+      processing = false;
+      if (rafId) cancelAnimationFrame(rafId);
+      statusEl.innerText = 'Stopped';
+    }
+
+    // stop on page unload
+    window.addEventListener('beforeunload', () => {
+      stopWebcam();
+      stopProcessing();
+    });
+
+    // convenience: reload model button via double click on model name
+    modelNameEl.addEventListener('dblclick', () => { loadModel(); });
+
+    // initially draw a placeholder checkerboard
+    drawCheckerboard(ctx, 640, 360);
+    outputCanvas.width = 640; outputCanvas.height = 360;
+
+    // small UI niceties: clicking canvas toggles mode
+    outputCanvas.addEventListener('click', () => {
+      const next = previewMode === 'remove' ? 'opacity' : previewMode === 'opacity' ? 'mask' : 'remove';
+      setMode(next);
+    });
+
+    // make processWidth apply immediately (restart loop if running)
+    processWidthInput.addEventListener('change', () => {
+      if (processing) {
+        // nothing to change; the loop reads this value each frame
+      }
+    });
+
+    // helpful keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.key === ' ') { // space -> toggle webcam
+        if (stream) stopWebcam(); else startWebcam();
+      }
+      if (e.key === 's') snapshotBtn.click();
+    });
+
   </script>
-
 </body>
 </html>
