@@ -1,154 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Background Remover (U²-Net)</title>
-  <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
-  <style>
-    body {
-      background: #0d1117;
-      color: #fff;
-      text-align: center;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    h1 { color: #00eaff; margin: 20px; }
-    input, button { 
-      background: #00aaff; 
-      color: white; 
-      border: none; 
-      border-radius: 8px; 
-      padding: 10px 20px; 
-      margin: 10px; 
-      cursor: pointer; 
-      font-weight: bold; 
-    }
-    canvas, img { 
-      max-width: 90%; 
-      margin-top: 15px; 
-      border-radius: 10px; 
-      box-shadow: 0 0 20px rgba(0,0,0,0.5); 
-    }
-    .slider { width: 200px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JS Upload Site</title>
+<style>
+body { font-family: Arial, sans-serif; margin:0; padding:0; }
+nav { background: #333; color: white; padding: 10px; display:flex; gap: 20px; }
+nav a { color:white; text-decoration:none; cursor:pointer; }
+nav a.active { text-decoration: underline; }
+.container { padding: 20px; }
+input, button { padding: 8px; margin:5px 0; }
+.file-item { border:1px solid #ccc; padding:5px; margin:5px 0; }
+img.preview { max-width:150px; display:block; margin-top:5px; }
+</style>
 </head>
 <body>
-  <h1>🧠 AI Background Remover (U²-Net)</h1>
-  <input type="file" id="fileInput" accept="image/*">
-  <br>
-  Smoothness: <input type="range" id="smoothness" class="slider" min="0" max="1" step="0.05" value="0.6">
-  <br>
-  Opacity: <input type="range" id="opacity" class="slider" min="0" max="1" step="0.05" value="1">
-  <br>
-  <canvas id="canvas"></canvas>
-  <br>
-  <button id="downloadBtn" style="display:none;">Download PNG</button>
 
-  <script>
-    const fileInput = document.getElementById("fileInput");
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    const downloadBtn = document.getElementById("downloadBtn");
-    const smoothSlider = document.getElementById("smoothness");
-    const opacitySlider = document.getElementById("opacity");
+<nav>
+  <a class="active" data-menu="home">Home</a>
+  <a data-menu="shop">Shop</a>
+  <a data-menu="item">Item</a>
+</nav>
 
-    let session, imageBitmap, maskData;
+<div class="container">
 
-    // Load U²-Net ONNX model
-    async function loadModel() {
-      document.querySelector("h1").innerText = "Loading AI Model... ⏳";
-      session = await ort.InferenceSession.create("https://huggingface.co/onnx-community/u2net/resolve/main/u2net.onnx");
-      document.querySelector("h1").innerText = "Model Ready ✅ Upload Image";
+  <!-- Search -->
+  <input type="text" id="searchInput" placeholder="Search by title or filename">
+
+  <!-- Upload Form -->
+  <div id="uploadForm">
+    <input type="text" id="fileTitle" placeholder="Enter title"><br>
+    <input type="file" id="fileInput"><br>
+    <button id="uploadBtn">Upload</button>
+  </div>
+
+  <!-- Display uploaded files -->
+  <div id="fileList"></div>
+
+</div>
+
+<script>
+const menuLinks = document.querySelectorAll('nav a');
+const container = document.querySelector('.container');
+const uploadBtn = document.getElementById('uploadBtn');
+const fileInput = document.getElementById('fileInput');
+const fileTitle = document.getElementById('fileTitle');
+const fileList = document.getElementById('fileList');
+const searchInput = document.getElementById('searchInput');
+
+let filesData = JSON.parse(localStorage.getItem('filesData') || '[]');
+let currentMenu = 'home';
+
+// --- Menu Switching ---
+menuLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    menuLinks.forEach(l=>l.classList.remove('active'));
+    link.classList.add('active');
+    currentMenu = link.dataset.menu;
+    renderFiles();
+  });
+});
+
+// --- Upload File ---
+uploadBtn.addEventListener('click', () => {
+  const file = fileInput.files[0];
+  const title = fileTitle.value.trim();
+  if (!file || !title) { alert("Please provide title and file!"); return; }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    filesData.push({title: title, name: file.name, data: e.target.result, menu: currentMenu});
+    localStorage.setItem('filesData', JSON.stringify(filesData));
+    fileTitle.value = '';
+    fileInput.value = '';
+    alert("File uploaded successfully!");
+    renderFiles();
+  };
+  reader.readAsDataURL(file);
+});
+
+// --- Render Files ---
+function renderFiles() {
+  const searchTerm = searchInput.value.toLowerCase();
+  const filtered = filesData.filter(f => 
+      (f.menu === currentMenu || currentMenu==='home') &&
+      (f.title.toLowerCase().includes(searchTerm) || f.name.toLowerCase().includes(searchTerm))
+  );
+
+  fileList.innerHTML = '';
+  filtered.forEach(f => {
+    const div = document.createElement('div');
+    div.classList.add('file-item');
+    div.innerHTML = `<strong>${f.title}</strong><br>${f.name}<br>`;
+    if (f.data.startsWith('data:image')) {
+      const img = document.createElement('img');
+      img.src = f.data;
+      img.classList.add('preview');
+      div.appendChild(img);
     }
-    loadModel();
+    fileList.appendChild(div);
+  });
+}
 
-    fileInput.addEventListener("change", async (e) => {
-      const file = e.target.files[0];
-      if (!file || !session) return;
-      imageBitmap = await createImageBitmap(file);
+// --- Search Input ---
+searchInput.addEventListener('input', renderFiles);
 
-      canvas.width = imageBitmap.width;
-      canvas.height = imageBitmap.height;
-      ctx.drawImage(imageBitmap, 0, 0);
+// Initial render
+renderFiles();
 
-      document.querySelector("h1").innerText = "Removing Background... 🧠";
-
-      const tensor = await imageToTensor(imageBitmap);
-      const feeds = { input: tensor };
-      const results = await session.run(feeds);
-      const output = results[Object.keys(results)[0]];
-      maskData = new Float32Array(output.data);
-
-      drawMaskedImage();
-      document.querySelector("h1").innerText = "✅ Background Removed";
-      downloadBtn.style.display = "inline-block";
-    });
-
-    smoothSlider.addEventListener("input", drawMaskedImage);
-    opacitySlider.addEventListener("input", drawMaskedImage);
-
-    function drawMaskedImage() {
-      if (!maskData || !imageBitmap) return;
-      const smooth = parseFloat(smoothSlider.value);
-      const opacity = parseFloat(opacitySlider.value);
-
-      const imgW = imageBitmap.width;
-      const imgH = imageBitmap.height;
-      const maskW = Math.sqrt(maskData.length);
-      const maskH = maskW;
-      const maskCanvas = document.createElement("canvas");
-      maskCanvas.width = maskW;
-      maskCanvas.height = maskH;
-      const mctx = maskCanvas.getContext("2d");
-      const maskImg = mctx.createImageData(maskW, maskH);
-      for (let i = 0; i < maskData.length; i++) {
-        const v = maskData[i] * 255;
-        maskImg.data[i*4+0] = v;
-        maskImg.data[i*4+1] = v;
-        maskImg.data[i*4+2] = v;
-        maskImg.data[i*4+3] = 255;
-      }
-      mctx.putImageData(maskImg,0,0);
-
-      ctx.clearRect(0,0,canvas.width,canvas.height);
-      ctx.globalAlpha = opacity;
-      ctx.drawImage(imageBitmap,0,0);
-      ctx.globalCompositeOperation = "destination-in";
-      ctx.filter = `blur(${smooth*10}px)`;
-      ctx.drawImage(maskCanvas,0,0,canvas.width,canvas.height);
-      ctx.filter = "none";
-      ctx.globalCompositeOperation = "source-over";
-      ctx.globalAlpha = 1;
-    }
-
-    async function imageToTensor(img) {
-      const tmpCanvas = document.createElement("canvas");
-      const size = 320;
-      tmpCanvas.width = size;
-      tmpCanvas.height = size;
-      const tctx = tmpCanvas.getContext("2d");
-      tctx.drawImage(img,0,0,size,size);
-      const imgData = tctx.getImageData(0,0,size,size);
-      const data = Float32Array.from(imgData.data).filter((_,i)=>i%4!==3);
-      const tensor = new ort.Tensor('float32', new Float32Array(size*size*3), [1,3,size,size]);
-      for(let y=0;y<size;y++){
-        for(let x=0;x<size;x++){
-          for(let c=0;c<3;c++){
-            tensor.data[c*size*size+y*size+x] = data[(y*size+x)*3+c]/255;
-          }
-        }
-      }
-      return tensor;
-    }
-
-    downloadBtn.addEventListener("click",()=>{
-      const link = document.createElement("a");
-      link.download="removed-background.png";
-      link.href=canvas.toDataURL("image/png");
-      link.click();
-    });
-  </script>
+</script>
 </body>
 </html>
