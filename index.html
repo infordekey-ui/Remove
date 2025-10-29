@@ -130,10 +130,17 @@ main {
   margin: 0 auto;
 }
 
-/* Search Bar */
-.search-container {
-  max-width: 600px;
+/* Search and GIF Container */
+.search-gif-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  max-width: 900px;
   margin: 0 auto 30px;
+}
+
+.search-container {
+  flex: 1;
   position: relative;
 }
 
@@ -160,6 +167,37 @@ main {
   top: 50%;
   transform: translateY(-50%);
   color: var(--secondary-color);
+}
+
+.gif-display {
+  width: 200px;
+  height: 150px;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  position: relative;
+}
+
+.gif-display img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sound-status {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.7rem;
 }
 
 /* Upload Form */
@@ -387,6 +425,33 @@ main {
   color: var(--dark-color);
 }
 
+/* Sound Alert */
+.sound-alert {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #ff6b6b;
+  color: white;
+  padding: 15px 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  z-index: 1000;
+  display: none;
+  max-width: 300px;
+}
+
+.sound-alert.show {
+  display: block;
+  animation: fadeInOut 5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateX(100px); }
+  10% { opacity: 1; transform: translateX(0); }
+  90% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(100px); }
+}
+
 /* Footer */
 footer {
   background-color: white;
@@ -456,6 +521,15 @@ footer {
     display: block;
   }
   
+  .search-gif-container {
+    flex-direction: column;
+  }
+  
+  .gif-display {
+    width: 100%;
+    max-width: 200px;
+  }
+  
   .file-grid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
@@ -488,6 +562,12 @@ footer {
 </head>
 <body>
 
+<!-- Sound Alert -->
+<div class="sound-alert" id="soundAlert">
+  <i class="fas fa-volume-up"></i> 
+  <span>សម្លេងត្រូវបានចាក់ហើយ! សូមពិនិត្យកម្រិតសម្លេងនៅលើឧបករណ៍របស់អ្នក។</span>
+</div>
+
 <header>
   <div class="container">
     <nav>
@@ -515,10 +595,17 @@ footer {
     <p>Upload, organize, and access your files from anywhere</p>
   </div>
 
-  <!-- Search -->
-  <div class="search-container">
-    <input type="text" id="searchInput" placeholder="Search by title or filename">
-    <i class="fas fa-search"></i>
+  <!-- Search and GIF Display -->
+  <div class="search-gif-container">
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search by title or filename">
+      <i class="fas fa-search"></i>
+    </div>
+    
+    <div class="gif-display">
+      <img id="gifImage" src="pic/niyy.gif" alt="Animated GIF">
+      <div class="sound-status" id="soundStatus">ស្ងាត់</div>
+    </div>
   </div>
 
   <!-- Upload Form -->
@@ -571,6 +658,12 @@ footer {
   </div>
 </footer>
 
+<!-- Hidden audio element for playing sound -->
+<audio id="soundEffect" preload="auto">
+  <source src="pic/funan1.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
 <script>
 const menuLinks = document.querySelectorAll('nav a');
 const uploadBtn = document.getElementById('uploadBtn');
@@ -580,9 +673,83 @@ const fileList = document.getElementById('fileList');
 const searchInput = document.getElementById('searchInput');
 const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
 const navLinks = document.querySelector('.nav-links');
+const gifImage = document.getElementById('gifImage');
+const soundEffect = document.getElementById('soundEffect');
+const soundAlert = document.getElementById('soundAlert');
+const soundStatus = document.getElementById('soundStatus');
 
 let filesData = JSON.parse(localStorage.getItem('filesData') || '[]');
 let currentMenu = 'home';
+
+// Function to show sound alert
+function showSoundAlert() {
+  soundAlert.classList.add('show');
+  setTimeout(() => {
+    soundAlert.classList.remove('show');
+  }, 5000);
+}
+
+// Function to update sound status
+function updateSoundStatus(playing) {
+  soundStatus.textContent = playing ? 'កំពុងចាក់' : 'ស្ងាត់';
+  soundStatus.style.background = playing ? 'rgba(40, 167, 69, 0.8)' : 'rgba(0,0,0,0.7)';
+}
+
+// GIF animation sequence
+function startGifSequence() {
+  // Show niyy.gif immediately when page loads
+  gifImage.src = "pic/niyy.gif";
+  
+  // After 5 seconds, change to niyy1.gif for 3 seconds
+  setTimeout(() => {
+    gifImage.src = "pic/niyy1.gif";
+    
+    // Play sound effect with error handling
+    try {
+      // Reset audio to beginning
+      soundEffect.currentTime = 0;
+      
+      // Play the sound
+      const playPromise = soundEffect.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          // Sound started successfully
+          console.log("សម្លេងត្រូវបានចាក់ដោយជោគជ័យ");
+          updateSoundStatus(true);
+          showSoundAlert();
+        }).catch(error => {
+          // Sound failed to play
+          console.error("មិនអាចចាក់សម្លេង:", error);
+          updateSoundStatus(false);
+          
+          // Show alert with troubleshooting tips
+          alert("សម្លេងមិនអាចចាក់បាន។ សូមពិនិត្យ:\n1. កម្រិតសម្លេងនៅលើកុំព្យូទ័ររបស់អ្នក\n2. ប្រើ browser ថ្មី (Chrome, Firefox)\n3. បិទការរារាំង pop-up\n4. ពិនិត្យថាឯកសារ funan1.mp3 មាននៅក្នុងថត pic/");
+        });
+      }
+    } catch (error) {
+      console.error("កំហុសក្នុងការចាក់សម្លេង:", error);
+      updateSoundStatus(false);
+    }
+    
+    // After 3 seconds, change back to niyy.gif
+    setTimeout(() => {
+      gifImage.src = "pic/niyy.gif";
+      updateSoundStatus(false);
+    }, 3000);
+  }, 5000);
+}
+
+// Add event listeners for audio
+soundEffect.addEventListener('ended', function() {
+  updateSoundStatus(false);
+});
+
+soundEffect.addEventListener('error', function(e) {
+  console.error('កំហុសសម្លេង:', e);
+  updateSoundStatus(false);
+  alert('មានបញ្ហាជាមួយឯកសារសម្លេង funan1.mp3។ សូមពិនិត្យថាវាមាននៅក្នុងថត pic/');
+});
 
 // Mobile menu toggle
 mobileMenuBtn.addEventListener('click', () => {
@@ -704,6 +871,9 @@ function renderFiles() {
 
 // --- Search Input ---
 searchInput.addEventListener('input', renderFiles);
+
+// Start the GIF animation sequence when page loads
+window.addEventListener('load', startGifSequence);
 
 // Initial render
 renderFiles();
