@@ -1,1359 +1,804 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FileVault - YouTube Downloader</title>
-<style>
-:root {
-  --primary-color: #4a6cf7;
-  --primary-dark: #3a56d4;
-  --secondary-color: #6c757d;
-  --light-color: #f8f9fa;
-  --dark-color: #212529;
-  --success-color: #28a745;
-  --danger-color: #dc3545;
-  --border-radius: 8px;
-  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --transition: all 0.3s ease;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-  color: var(--dark-color);
-  background-color: #f5f7ff;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-/* Header & Navigation */
-header {
-  background-color: white;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 0;
-}
-
-.logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.logo i {
-  font-size: 1.7rem;
-}
-
-.nav-links {
-  display: flex;
-  gap: 25px;
-}
-
-.nav-links a {
-  color: var(--dark-color);
-  text-decoration: none;
-  font-weight: 500;
-  padding: 8px 12px;
-  border-radius: var(--border-radius);
-  transition: var(--transition);
-  position: relative;
-}
-
-.nav-links a:hover {
-  color: var(--primary-color);
-}
-
-.nav-links a.active {
-  color: var(--primary-color);
-  background-color: rgba(74, 108, 247, 0.1);
-}
-
-.nav-links a.active::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 12px;
-  right: 12px;
-  height: 2px;
-  background-color: var(--primary-color);
-}
-
-.mobile-menu-btn {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: var(--dark-color);
-}
-
-/* Main Content */
-main {
-  padding: 40px 0;
-}
-
-.page-title {
-  margin-bottom: 30px;
-  text-align: center;
-}
-
-.page-title h1 {
-  font-size: 2.2rem;
-  color: var(--dark-color);
-  margin-bottom: 10px;
-}
-
-.page-title p {
-  color: var(--secondary-color);
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-/* Search and GIF Container */
-.search-gif-container {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  max-width: 900px;
-  margin: 0 auto 30px;
-}
-
-.search-container {
-  flex: 1;
-  position: relative;
-}
-
-.search-container input {
-  width: 100%;
-  padding: 12px 20px;
-  border: 1px solid #e1e5ee;
-  border-radius: 50px;
-  font-size: 1rem;
-  transition: var(--transition);
-  background-color: white;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-}
-
-.search-container input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 2px 10px rgba(74, 108, 247, 0.2);
-}
-
-.search-container i {
-  position: absolute;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--secondary-color);
-}
-
-.gif-display {
-  width: 200px;
-  height: 150px;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  box-shadow: var(--box-shadow);
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-  position: relative;
-}
-
-.gif-display img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.sound-status {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  background: rgba(0,0,0,0.7);
-  color: white;
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-size: 0.7rem;
-}
-
-/* YouTube Downloader Section */
-.youtube-downloader {
-  background-color: white;
-  border-radius: var(--border-radius);
-  padding: 25px;
-  margin-bottom: 30px;
-  box-shadow: var(--box-shadow);
-}
-
-.youtube-downloader h2 {
-  margin-bottom: 20px;
-  color: var(--dark-color);
-  font-size: 1.3rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.youtube-input-container {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.youtube-input-container input {
-  flex: 1;
-  padding: 12px 15px;
-  border: 1px solid #e1e5ee;
-  border-radius: var(--border-radius);
-  font-size: 1rem;
-  transition: var(--transition);
-}
-
-.youtube-input-container input:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
-}
-
-.download-options {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.option-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px;
-  background-color: var(--light-color);
-  border: 1px solid #e1e5ee;
-  border-radius: var(--border-radius);
-  font-size: 1rem;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.option-btn:hover {
-  border-color: var(--primary-color);
-  background-color: rgba(74, 108, 247, 0.05);
-}
-
-.option-btn.active {
-  background-color: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-}
-
-.download-info {
-  background-color: var(--light-color);
-  padding: 15px;
-  border-radius: var(--border-radius);
-  margin-bottom: 20px;
-  display: none;
-}
-
-.download-info.active {
-  display: block;
-}
-
-.video-preview {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
-}
-
-.thumbnail {
-  width: 120px;
-  height: 90px;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  background-color: #e1e5ee;
-}
-
-.thumbnail img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.video-details {
-  flex: 1;
-}
-
-.video-title {
-  font-weight: 600;
-  margin-bottom: 5px;
-  color: var(--dark-color);
-}
-
-.video-channel {
-  color: var(--secondary-color);
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-}
-
-.video-duration {
-  color: var(--secondary-color);
-  font-size: 0.8rem;
-}
-
-.quality-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.quality-btn {
-  padding: 8px 12px;
-  background-color: white;
-  border: 1px solid #e1e5ee;
-  border-radius: var(--border-radius);
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.quality-btn:hover {
-  border-color: var(--primary-color);
-}
-
-.quality-btn.active {
-  background-color: var(--primary-color);
-  color: white;
-  border-color: var(--primary-color);
-}
-
-.download-progress {
-  margin-bottom: 15px;
-  display: none;
-}
-
-.progress-bar {
-  height: 8px;
-  background-color: #e1e5ee;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 5px;
-}
-
-.progress-fill {
-  height: 100%;
-  background-color: var(--primary-color);
-  width: 0%;
-  transition: width 0.3s ease;
-}
-
-.progress-text {
-  font-size: 0.8rem;
-  color: var(--secondary-color);
-  text-align: center;
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: var(--border-radius);
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.btn:hover {
-  background-color: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.btn:active {
-  transform: translateY(0);
-}
-
-.btn-block {
-  width: 100%;
-}
-
-.btn-outline {
-  background-color: transparent;
-  border: 1px solid var(--primary-color);
-  color: var(--primary-color);
-}
-
-.btn-outline:hover {
-  background-color: var(--primary-color);
-  color: white;
-}
-
-.btn:disabled {
-  background-color: var(--secondary-color);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.btn:disabled:hover {
-  transform: none;
-  box-shadow: none;
-}
-
-.btn-danger {
-  background-color: var(--danger-color);
-}
-
-.btn-danger:hover {
-  background-color: #c82333;
-}
-
-/* Upload Form */
-.upload-card {
-  background-color: white;
-  border-radius: var(--border-radius);
-  padding: 25px;
-  margin-bottom: 30px;
-  box-shadow: var(--box-shadow);
-}
-
-.upload-card h2 {
-  margin-bottom: 20px;
-  color: var(--dark-color);
-  font-size: 1.3rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: var(--dark-color);
-}
-
-.form-control {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid #e1e5ee;
-  border-radius: var(--border-radius);
-  font-size: 1rem;
-  transition: var(--transition);
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
-}
-
-.file-input-wrapper {
-  position: relative;
-  overflow: hidden;
-  display: inline-block;
-  width: 100%;
-}
-
-.file-input-wrapper input[type=file] {
-  position: absolute;
-  left: 0;
-  top: 0;
-  opacity: 0;
-  width: 100%;
-  height: 100%;
-  cursor: pointer;
-}
-
-.file-input-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 12px 15px;
-  background-color: var(--light-color);
-  border: 2px dashed #d1d5db;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  transition: var(--transition);
-  text-align: center;
-}
-
-.file-input-label:hover {
-  border-color: var(--primary-color);
-  background-color: rgba(74, 108, 247, 0.05);
-}
-
-.file-input-label i {
-  font-size: 1.2rem;
-  color: var(--primary-color);
-}
-
-/* File List */
-.files-section h2 {
-  margin-bottom: 20px;
-  color: var(--dark-color);
-  font-size: 1.3rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.file-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
-}
-
-.file-card {
-  background-color: white;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  box-shadow: var(--box-shadow);
-  transition: var(--transition);
-}
-
-.file-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-}
-
-.file-preview {
-  height: 160px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f8f9fa;
-  overflow: hidden;
-}
-
-.file-preview img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.file-preview .file-icon {
-  font-size: 3rem;
-  color: var(--secondary-color);
-}
-
-.file-info {
-  padding: 15px;
-}
-
-.file-title {
-  font-weight: 600;
-  margin-bottom: 5px;
-  color: var(--dark-color);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.file-name {
-  color: var(--secondary-color);
-  font-size: 0.9rem;
-  margin-bottom: 15px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.file-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.file-actions .btn {
-  flex: 1;
-  padding: 8px 12px;
-  font-size: 0.9rem;
-}
-
-.empty-state {
-  text-align: center;
-  padding: 40px 20px;
-  color: var(--secondary-color);
-}
-
-.empty-state i {
-  font-size: 3rem;
-  margin-bottom: 15px;
-  color: #d1d5db;
-}
-
-.empty-state h3 {
-  margin-bottom: 10px;
-  color: var(--dark-color);
-}
-
-/* Sound Alert */
-.sound-alert {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: #ff6b6b;
-  color: white;
-  padding: 15px 20px;
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  z-index: 1000;
-  display: none;
-  max-width: 300px;
-}
-
-.sound-alert.show {
-  display: block;
-  animation: fadeInOut 5s ease-in-out;
-}
-
-@keyframes fadeInOut {
-  0% { opacity: 0; transform: translateX(100px); }
-  10% { opacity: 1; transform: translateX(0); }
-  90% { opacity: 1; transform: translateX(0); }
-  100% { opacity: 0; transform: translateX(100px); }
-}
-
-/* Footer */
-footer {
-  background-color: white;
-  padding: 30px 0;
-  margin-top: 50px;
-  border-top: 1px solid #e1e5ee;
-  text-align: center;
-  color: var(--secondary-color);
-}
-
-.footer-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-}
-
-.footer-links {
-  display: flex;
-  gap: 20px;
-}
-
-.footer-links a {
-  color: var(--secondary-color);
-  text-decoration: none;
-  transition: var(--transition);
-}
-
-.footer-links a:hover {
-  color: var(--primary-color);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  .nav-links {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background-color: white;
-    flex-direction: column;
-    padding: 20px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-    gap: 0;
-  }
-  
-  .nav-links.active {
-    display: flex;
-  }
-  
-  .nav-links a {
-    padding: 12px 15px;
-    border-radius: 0;
-    border-bottom: 1px solid #f0f0f0;
-  }
-  
-  .nav-links a:last-child {
-    border-bottom: none;
-  }
-  
-  .nav-links a.active::after {
-    display: none;
-  }
-  
-  .mobile-menu-btn {
-    display: block;
-  }
-  
-  .search-gif-container {
-    flex-direction: column;
-  }
-  
-  .gif-display {
-    width: 100%;
-    max-width: 200px;
-  }
-  
-  .file-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
-  
-  .page-title h1 {
-    font-size: 1.8rem;
-  }
-  
-  .youtube-input-container {
-    flex-direction: column;
-  }
-  
-  .download-options {
-    flex-direction: column;
-  }
-  
-  .video-preview {
-    flex-direction: column;
-  }
-  
-  .thumbnail {
-    width: 100%;
-    height: 180px;
-  }
-}
-
-@media (max-width: 576px) {
-  .container {
-    padding: 0 15px;
-  }
-  
-  .file-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .file-actions {
-    flex-direction: column;
-  }
-  
-  .footer-links {
-    flex-direction: column;
-    gap: 10px;
-  }
-}
-</style>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Java Edition 1.21.5 Web Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #3a506b;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+        }
+
+        .version {
+            color: #8BC34A;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50, #2196F3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid #3a506b;
+        }
+
+        .username {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-right: 1px solid #3a506b;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .menu-item {
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-item:hover {
+            background: rgba(58, 80, 107, 0.4);
+        }
+
+        .menu-item.active {
+            background: rgba(76, 175, 80, 0.2);
+            border-left: 4px solid #4CAF50;
+        }
+
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .game-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .game-screen {
+            flex: 1;
+            background: #1e1e1e;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-canvas {
+            width: 100%;
+            height: 100%;
+            background: #1e1e1e;
+        }
+
+        .game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        .hotbar {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 8px;
+            border-radius: 10px;
+            border: 2px solid #3a506b;
+        }
+
+        .hotbar-slot {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #3a506b;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .hotbar-slot.active {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        .health-bar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 3px;
+        }
+
+        .heart {
+            width: 20px;
+            height: 18px;
+            background: #f44336;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        }
+
+        .heart.empty {
+            background: #555;
+        }
+
+        .food-bar {
+            position: absolute;
+            top: 50px;
+            left: 20px;
+            display: flex;
+            gap: 3px;
+        }
+
+        .food {
+            width: 18px;
+            height: 18px;
+            background: #FF9800;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            transform: rotate(90deg);
+        }
+
+        .food.empty {
+            background: #555;
+        }
+
+        .chat-box {
+            position: absolute;
+            bottom: 100px;
+            left: 20px;
+            width: 350px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 8px;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .chat-message {
+            margin-bottom: 5px;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .chat-message .player {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .chat-input {
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            width: 350px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #3a506b;
+            border-radius: 4px;
+            padding: 8px;
+            color: white;
+            display: none;
+        }
+
+        .chat-input.active {
+            display: block;
+        }
+
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 8px;
+            width: 200px;
+        }
+
+        .control-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .key {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid #3a506b;
+        }
+
+        .loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a2e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .loading-bar {
+            width: 300px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .server-list {
+            padding: 20px;
+            display: none;
+        }
+
+        .server-item {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #3a506b;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .server-item:hover {
+            background: rgba(58, 80, 107, 0.4);
+        }
+
+        .server-info h3 {
+            color: #4CAF50;
+            margin-bottom: 5px;
+        }
+
+        .server-info p {
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .server-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .online-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4CAF50;
+        }
+
+        .player-count {
+            font-size: 14px;
+        }
+
+        .connect-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .connect-btn:hover {
+            background: #45a049;
+        }
+
+        .footer {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+            border-top: 1px solid #3a506b;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-
-<!-- Sound Alert -->
-<div class="sound-alert" id="soundAlert">
-  <i class="fas fa-volume-up"></i> 
-  <span>សម្លេងត្រូវបានចាក់ហើយ! សូមពិនិត្យកម្រិតសម្លេងនៅលើឧបករណ៍របស់អ្នក។</span>
-</div>
-
-<header>
-  <div class="container">
-    <nav>
-      <div class="logo">
-        <i class="fas fa-cloud-upload-alt"></i>
-        <span>Funan Design</span>
-      </div>
-      
-      <div class="nav-links">
-        <a class="active" data-menu="home">Home</a>
-        <a data-menu="shop">Shop</a>
-        <a data-menu="item">Item</a>
-      </div>
-      
-      <button class="mobile-menu-btn">
-        <i class="fas fa-bars"></i>
-      </button>
-    </nav>
-  </div>
-</header>
-
-<main class="container">
-  <div class="page-title">
-    <h1>Funan Design</h1>
-    <p>Upload, organize, and access your files from anywhere</p>
-  </div>
-
-  <!-- Search and GIF Display -->
-  <div class="search-gif-container">
-    <div class="search-container">
-      <input type="text" id="searchInput" placeholder="Search by title or filename">
-      <i class="fas fa-search"></i>
-    </div>
-    
-    <div class="gif-display">
-      <img id="gifImage" src="pic/niyy.gif" alt="Animated GIF">
-      <div class="sound-status" id="soundStatus">ស្ងាត់</div>
-    </div>
-  </div>
-
-  <!-- YouTube Downloader -->
-  <div class="youtube-downloader">
-    <h2><i class="fab fa-youtube"></i> YouTube Downloader</h2>
-    
-    <div class="youtube-input-container">
-      <input type="text" id="youtubeUrl" placeholder="Paste YouTube URL here">
-      <button id="fetchVideoBtn" class="btn">
-        <i class="fas fa-search"></i> Fetch Video
-      </button>
-    </div>
-    
-    <div class="download-options">
-      <div class="option-btn active" data-type="video">
-        <i class="fas fa-video"></i> Download Video (MP4)
-      </div>
-      <div class="option-btn" data-type="audio">
-        <i class="fas fa-music"></i> Download Audio (MP3)
-      </div>
-    </div>
-    
-    <div class="download-info" id="downloadInfo">
-      <div class="video-preview">
-        <div class="thumbnail">
-          <img id="videoThumbnail" src="" alt="Video Thumbnail">
+    <div class="header">
+        <div class="logo">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBmaWxsPSIjNENBRjUwIiBkPSJNMTIsMkM2LjQ4LDIgMiw2LjQ4IDIsMTJzNC40OCwxMCAxMCwxMCAxMC00LjQ4IDEwLTEwUzE3LjUyLDIgMTIsMnogTTE3LDE3YzAsMC41NS0wLjQ1LDEtMSwxSDhjLTAuNTUsMC0xLTAuNDUtMS0xdi0xYzAtMC41NSwwLjQ1LTEsMS0xaDhjMC41NSwwIDEsMC40NSwxLDFWMTd6IE0xMC41LDE0LjVjMCwwLjgyLTAuNjgsMS41LTEuNSwxLjVTNy41LDE1LjMyLDcuNSwxNC41UzguMTgsMTMgOSwxM1MxMC41LDEzLjY4LDEwLjUsMTQuNXogTTE2LjUsMTQuNWMwLDAuODItMC42OCwxLjUtMS41LDEuNXMtMS41LTAuNjgtMS41LTEuNVMxNC4xOCwxMyAxNSwxM1MxNi41LDEzLjY4LDE2LjUsMTQuNXoiLz48L3N2Zz4=" alt="Minecraft Logo">
+            <h1>Minecraft <span class="version">Java Edition 1.21.5</span></h1>
         </div>
-        <div class="video-details">
-          <div class="video-title" id="videoTitle">Video Title</div>
-          <div class="video-channel" id="videoChannel">Channel Name</div>
-          <div class="video-duration" id="videoDuration">00:00</div>
+        <div class="user-info">
+            <div class="avatar">P</div>
+            <div class="username">Player_123</div>
         </div>
-      </div>
-      
-      <div class="quality-options" id="qualityOptions">
-        <!-- Quality options will be added here dynamically -->
-      </div>
-      
-      <div class="download-progress" id="downloadProgress">
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="menu-item active" data-tab="singleplayer">
+                <i>🎮</i> Singleplayer
+            </div>
+            <div class="menu-item" data-tab="multiplayer">
+                <i>🌐</i> Multiplayer
+            </div>
+            <div class="menu-item" data-tab="settings">
+                <i>⚙️</i> Settings
+            </div>
+            <div class="menu-item" data-tab="skins">
+                <i>👤</i> Skins
+            </div>
+            <div class="menu-item" data-tab="mods">
+                <i>🔧</i> Mods
+            </div>
         </div>
-        <div class="progress-text" id="progressText">Preparing download...</div>
-      </div>
-      
-      <button id="downloadBtn" class="btn btn-block" disabled>
-        <i class="fas fa-download"></i> Download
-      </button>
-    </div>
-  </div>
 
-  <!-- Upload Form -->
-  <div class="upload-card">
-    <h2><i class="fas fa-upload"></i> Upload New File</h2>
-    <div class="form-group">
-      <label for="fileTitle">File Title</label>
-      <input type="text" id="fileTitle" class="form-control" placeholder="Enter a descriptive title">
-    </div>
-    
-    <div class="form-group">
-      <label for="fileInput">Select File</label>
-      <div class="file-input-wrapper">
-        <input type="file" id="fileInput">
-        <div class="file-input-label">
-          <i class="fas fa-cloud-upload-alt"></i>
-          <span>Choose a file or drag it here</span>
+        <div class="game-container">
+            <!-- Singleplayer Tab -->
+            <div class="tab-content active" id="singleplayer">
+                <div class="game-screen">
+                    <canvas class="game-canvas" id="gameCanvas"></canvas>
+                    <div class="game-overlay">
+                        <div class="crosshair">+</div>
+                        <div class="health-bar">
+                            <div class="heart"></div>
+                            <div class="heart"></div>
+                            <div class="heart"></div>
+                            <div class="heart"></div>
+                            <div class="heart"></div>
+                            <div class="heart"></div>
+                            <div class="heart"></div>
+                            <div class="heart"></div>
+                            <div class="heart"></div>
+                            <div class="heart"></div>
+                        </div>
+                        <div class="food-bar">
+                            <div class="food"></div>
+                            <div class="food"></div>
+                            <div class="food"></div>
+                            <div class="food"></div>
+                            <div class="food"></div>
+                            <div class="food"></div>
+                            <div class="food"></div>
+                            <div class="food"></div>
+                            <div class="food"></div>
+                            <div class="food"></div>
+                        </div>
+                        <div class="hotbar">
+                            <div class="hotbar-slot active">🌳</div>
+                            <div class="hotbar-slot">⛏️</div>
+                            <div class="hotbar-slot">🗡️</div>
+                            <div class="hotbar-slot">🥖</div>
+                            <div class="hotbar-slot">🧱</div>
+                            <div class="hotbar-slot">🪓</div>
+                            <div class="hotbar-slot">🏹</div>
+                            <div class="hotbar-slot">🔥</div>
+                            <div class="hotbar-slot">💧</div>
+                        </div>
+                        <div class="chat-box">
+                            <div class="chat-message">Joined the game</div>
+                            <div class="chat-message"><span class="player">Player_123</span> moved too quickly!</div>
+                            <div class="chat-message"><span class="player">Creeper</span> exploded</div>
+                        </div>
+                        <input type="text" class="chat-input" placeholder="Type your message...">
+                        <div class="controls">
+                            <div class="control-item">
+                                <span>Move Forward</span>
+                                <span class="key">W</span>
+                            </div>
+                            <div class="control-item">
+                                <span>Move Backward</span>
+                                <span class="key">S</span>
+                            </div>
+                            <div class="control-item">
+                                <span>Move Left</span>
+                                <span class="key">A</span>
+                            </div>
+                            <div class="control-item">
+                                <span>Move Right</span>
+                                <span class="key">D</span>
+                            </div>
+                            <div class="control-item">
+                                <span>Jump</span>
+                                <span class="key">SPACE</span>
+                            </div>
+                            <div class="control-item">
+                                <span>Sneak</span>
+                                <span class="key">SHIFT</span>
+                            </div>
+                            <div class="control-item">
+                                <span>Inventory</span>
+                                <span class="key">E</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Multiplayer Tab -->
+            <div class="tab-content" id="multiplayer">
+                <div class="server-list">
+                    <h2>Multiplayer Servers</h2>
+                    <div class="server-item">
+                        <div class="server-info">
+                            <h3>Hypixel Network</h3>
+                            <p>mc.hypixel.net</p>
+                        </div>
+                        <div class="server-status">
+                            <div class="online-indicator"></div>
+                            <div class="player-count">85,432 online</div>
+                            <button class="connect-btn">Connect</button>
+                        </div>
+                    </div>
+                    <div class="server-item">
+                        <div class="server-info">
+                            <h3>Mineplex</h3>
+                            <p>us.mineplex.com</p>
+                        </div>
+                        <div class="server-status">
+                            <div class="online-indicator"></div>
+                            <div class="player-count">12,567 online</div>
+                            <button class="connect-btn">Connect</button>
+                        </div>
+                    </div>
+                    <div class="server-item">
+                        <div class="server-info">
+                            <h3>CubeCraft Games</h3>
+                            <p>play.cubecraft.net</p>
+                        </div>
+                        <div class="server-status">
+                            <div class="online-indicator"></div>
+                            <div class="player-count">8,921 online</div>
+                            <button class="connect-btn">Connect</button>
+                        </div>
+                    </div>
+                    <div class="server-item">
+                        <div class="server-info">
+                            <h3>2b2t</h3>
+                            <p>2b2t.org</p>
+                        </div>
+                        <div class="server-status">
+                            <div class="online-indicator"></div>
+                            <div class="player-count">342 in queue</div>
+                            <button class="connect-btn">Connect</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content" id="settings">
+                <div style="padding: 20px;">
+                    <h2>Game Settings</h2>
+                    <div style="margin-top: 20px;">
+                        <h3>Graphics</h3>
+                        <div style="margin: 10px 0;">
+                            <label>Render Distance: Far</label>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <label>Graphics: Fancy</label>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <label>Max Framerate: 120 FPS</label>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <h3>Controls</h3>
+                        <div style="margin: 10px 0;">
+                            <label>Mouse Sensitivity: 85%</label>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <label>Invert Y-Axis: Off</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Screen -->
+            <div class="loading-screen" id="loadingScreen">
+                <h2>Loading Minecraft 1.21.5</h2>
+                <p>Building terrain...</p>
+                <div class="loading-bar">
+                    <div class="loading-progress" id="loadingProgress"></div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-    
-    <button id="uploadBtn" class="btn btn-block">
-      <i class="fas fa-upload"></i> Upload File
-    </button>
-  </div>
 
-  <!-- Display uploaded files -->
-  <div class="files-section">
-    <h2><i class="fas fa-files"></i> Your Files</h2>
-    <div id="fileList" class="file-grid">
-      <!-- Files will be displayed here -->
+    <div class="footer">
+        Minecraft Java Edition 1.21.5 Web Player | Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft.
     </div>
-  </div>
-</main>
 
-<footer>
-  <div class="container">
-    <div class="footer-content">
-      <div class="logo">
-        <i class="fas fa-cloud-upload-alt"></i>
-        <span>FileVault</span>
-      </div>
-      <div class="footer-links">
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
-        <a href="#">Contact Us</a>
-      </div>
-      <p>&copy; 2023 FileVault. All rights reserved.</p>
-    </div>
-  </div>
-</footer>
+    <script>
+        // Simulate game loading
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loadingProgress = document.getElementById('loadingProgress');
+            const gameCanvas = document.getElementById('gameCanvas');
+            const chatInput = document.querySelector('.chat-input');
+            
+            let progress = 0;
+            const loadingInterval = setInterval(() => {
+                progress += Math.random() * 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(loadingInterval);
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                        // Initialize game canvas
+                        initGameCanvas();
+                    }, 500);
+                }
+                loadingProgress.style.width = `${progress}%`;
+            }, 200);
 
-<!-- Hidden audio element for playing sound -->
-<audio id="soundEffect" preload="auto">
-  <source src="pic/funan1.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
+            // Tab switching
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Update active menu item
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding tab
+                    document.querySelectorAll('.tab-content').forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
 
-<script>
-const menuLinks = document.querySelectorAll('nav a');
-const uploadBtn = document.getElementById('uploadBtn');
-const fileInput = document.getElementById('fileInput');
-const fileTitle = document.getElementById('fileTitle');
-const fileList = document.getElementById('fileList');
-const searchInput = document.getElementById('searchInput');
-const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-const navLinks = document.querySelector('.nav-links');
-const gifImage = document.getElementById('gifImage');
-const soundEffect = document.getElementById('soundEffect');
-const soundAlert = document.getElementById('soundAlert');
-const soundStatus = document.getElementById('soundStatus');
+            // Chat functionality
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 't') {
+                    chatInput.classList.add('active');
+                    chatInput.focus();
+                }
+                
+                if (e.key === 'Escape') {
+                    chatInput.classList.remove('active');
+                }
+            });
 
-// YouTube Downloader Elements
-const youtubeUrl = document.getElementById('youtubeUrl');
-const fetchVideoBtn = document.getElementById('fetchVideoBtn');
-const optionBtns = document.querySelectorAll('.option-btn');
-const downloadInfo = document.getElementById('downloadInfo');
-const videoThumbnail = document.getElementById('videoThumbnail');
-const videoTitle = document.getElementById('videoTitle');
-const videoChannel = document.getElementById('videoChannel');
-const videoDuration = document.getElementById('videoDuration');
-const qualityOptions = document.getElementById('qualityOptions');
-const downloadProgress = document.getElementById('downloadProgress');
-const progressFill = document.getElementById('progressFill');
-const progressText = document.getElementById('progressText');
-const downloadBtn = document.getElementById('downloadBtn');
+            // Hotbar selection
+            const hotbarSlots = document.querySelectorAll('.hotbar-slot');
+            hotbarSlots.forEach((slot, index) => {
+                slot.addEventListener('click', function() {
+                    hotbarSlots.forEach(s => s.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
 
-let filesData = JSON.parse(localStorage.getItem('filesData') || '[]');
-let currentMenu = 'home';
-let currentDownloadType = 'video';
-let currentVideoData = null;
-let selectedQuality = null;
-
-// Backend API URL - Replace with your actual backend URL
-const BACKEND_URL = 'https://your-backend-service.com/api';
-
-// Function to show sound alert
-function showSoundAlert() {
-  soundAlert.classList.add('show');
-  setTimeout(() => {
-    soundAlert.classList.remove('show');
-  }, 5000);
-}
-
-// Function to update sound status
-function updateSoundStatus(playing) {
-  soundStatus.textContent = playing ? 'កំពុងចាក់' : 'ស្ងាត់';
-  soundStatus.style.background = playing ? 'rgba(40, 167, 69, 0.8)' : 'rgba(0,0,0,0.7)';
-}
-
-// GIF animation sequence
-function startGifSequence() {
-  // Show niyy.gif immediately when page loads
-  gifImage.src = "pic/niyy.gif";
-  
-  // After 5 seconds, change to niyy1.gif for 3 seconds
-  setTimeout(() => {
-    gifImage.src = "pic/niyy1.gif";
-    
-    // Play sound effect with error handling
-    try {
-      // Reset audio to beginning
-      soundEffect.currentTime = 0;
-      
-      // Play the sound
-      const playPromise = soundEffect.play();
-      
-      if (playPromise !== undefined) {
-        playPromise.then(() => {
-          // Sound started successfully
-          console.log("សម្លេងត្រូវបានចាក់ដោយជោគជ័យ");
-          updateSoundStatus(true);
-          showSoundAlert();
-        }).catch(error => {
-          // Sound failed to play
-          console.error("មិនអាចចាក់សម្លេង:", error);
-          updateSoundStatus(false);
-          
-          // Show alert with troubleshooting tips
-          alert("សម្លេងមិនអាចចាក់បាន។ សូមពិនិត្យ:\n1. កម្រិតសម្លេងនៅលើកុំព្យូទ័ររបស់អ្នក\n2. ប្រើ browser ថ្មី (Chrome, Firefox)\n3. បិទការរារាំង pop-up\n4. ពិនិត្យថាឯកសារ funan1.mp3 មាននៅក្នុងថត pic/");
+            // Connect buttons
+            const connectButtons = document.querySelectorAll('.connect-btn');
+            connectButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    alert('Connecting to server... (This is a simulation)');
+                });
+            });
         });
-      }
-    } catch (error) {
-      console.error("កំហុសក្នុងការចាក់សម្លេង:", error);
-      updateSoundStatus(false);
-    }
-    
-    // After 3 seconds, change back to niyy.gif
-    setTimeout(() => {
-      gifImage.src = "pic/niyy.gif";
-      updateSoundStatus(false);
-    }, 3000);
-  }, 5000);
-}
 
-// Add event listeners for audio
-soundEffect.addEventListener('ended', function() {
-  updateSoundStatus(false);
-});
-
-soundEffect.addEventListener('error', function(e) {
-  console.error('កំហុសសម្លេង:', e);
-  updateSoundStatus(false);
-  alert('មានបញ្ហាជាមួយឯកសារសម្លេង funan1.mp3។ សូមពិនិត្យថាវាមាននៅក្នុងថត pic/');
-});
-
-// Mobile menu toggle
-mobileMenuBtn.addEventListener('click', () => {
-  navLinks.classList.toggle('active');
-});
-
-// Close mobile menu when clicking outside
-document.addEventListener('click', (e) => {
-  if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
-    navLinks.classList.remove('active');
-  }
-});
-
-// --- Menu Switching ---
-menuLinks.forEach(link => {
-  link.addEventListener('click', () => {
-    menuLinks.forEach(l=>l.classList.remove('active'));
-    link.classList.add('active');
-    currentMenu = link.dataset.menu;
-    renderFiles();
-    
-    // Close mobile menu after selection
-    navLinks.classList.remove('active');
-  });
-});
-
-// --- Upload File ---
-uploadBtn.addEventListener('click', () => {
-  const file = fileInput.files[0];
-  const title = fileTitle.value.trim();
-  if (!file || !title) { 
-    alert("Please provide title and file!"); 
-    return; 
-  }
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    // Add new file to the end (so reverse shows newest first)
-    filesData.push({title: title, name: file.name, data: e.target.result, menu: currentMenu});
-    localStorage.setItem('filesData', JSON.stringify(filesData));
-    fileTitle.value = '';
-    fileInput.value = '';
-    renderFiles();
-  };
-  reader.readAsDataURL(file);
-});
-
-// --- Render Files ---
-function renderFiles() {
-  const searchTerm = searchInput.value.toLowerCase();
-
-  // Show newest uploads first
-  const sortedData = [...filesData].reverse();
-
-  const filtered = sortedData.filter(f => 
-      (f.menu === currentMenu || currentMenu==='home') &&
-      (f.title.toLowerCase().includes(searchTerm) || f.name.toLowerCase().includes(searchTerm))
-  );
-
-  fileList.innerHTML = '';
-  
-  if (filtered.length === 0) {
-    fileList.innerHTML = `
-      <div class="empty-state">
-        <i class="fas fa-folder-open"></i>
-        <h3>No files found</h3>
-        <p>Upload your first file to get started</p>
-      </div>
-    `;
-    return;
-  }
-
-  filtered.forEach(f => {
-    const fileCard = document.createElement('div');
-    fileCard.classList.add('file-card');
-    
-    // Determine file type for icon
-    const fileExtension = f.name.split('.').pop().toLowerCase();
-    const isImage = f.data.startsWith('data:image');
-    
-    let fileIcon = 'fas fa-file';
-    if (isImage) fileIcon = 'fas fa-file-image';
-    else if (fileExtension === 'pdf') fileIcon = 'fas fa-file-pdf';
-    else if (['doc', 'docx'].includes(fileExtension)) fileIcon = 'fas fa-file-word';
-    else if (['xls', 'xlsx'].includes(fileExtension)) fileIcon = 'fas fa-file-excel';
-    else if (['ppt', 'pptx'].includes(fileExtension)) fileIcon = 'fas fa-file-powerpoint';
-    else if (['zip', 'rar', '7z'].includes(fileExtension)) fileIcon = 'fas fa-file-archive';
-    
-    fileCard.innerHTML = `
-      <div class="file-preview">
-        ${isImage ? 
-          `<img src="${f.data}" alt="${f.title}">` : 
-          `<i class="${fileIcon} file-icon"></i>`
+        // Initialize game canvas with simple 3D effect
+        function initGameCanvas() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas size to match container
+            function resizeCanvas() {
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = canvas.parentElement.clientHeight;
+                drawGame();
+            }
+            
+            // Initial resize
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Simple game rendering
+            function drawGame() {
+                const width = canvas.width;
+                const height = canvas.height;
+                
+                // Clear canvas
+                ctx.fillStyle = '#87CEEB';
+                ctx.fillRect(0, 0, width, height);
+                
+                // Draw sky gradient
+                const skyGradient = ctx.createLinearGradient(0, 0, 0, height/2);
+                skyGradient.addColorStop(0, '#87CEEB');
+                skyGradient.addColorStop(1, '#98D8E8');
+                ctx.fillStyle = skyGradient;
+                ctx.fillRect(0, 0, width, height/2);
+                
+                // Draw sun
+                ctx.beginPath();
+                ctx.arc(width - 100, 100, 40, 0, Math.PI * 2);
+                ctx.fillStyle = '#FFD700';
+                ctx.fill();
+                
+                // Draw ground
+                ctx.fillStyle = '#8B6914';
+                ctx.fillRect(0, height/2, width, height/2);
+                
+                // Draw grass
+                ctx.fillStyle = '#7CFC00';
+                ctx.fillRect(0, height/2, width, 20);
+                
+                // Draw some blocks
+                drawBlock(ctx, width/2 - 150, height/2 - 150, 100, '#8B6914', '#A0522D');
+                drawBlock(ctx, width/2 + 50, height/2 - 150, 100, '#808080', '#696969');
+                drawBlock(ctx, width/2 - 50, height/2 - 250, 100, '#1E90FF', '#0000CD');
+                
+                // Draw a tree
+                drawTree(ctx, width/2 - 300, height/2 - 200);
+                
+                // Draw clouds
+                drawCloud(ctx, 200, 150);
+                drawCloud(ctx, 500, 100);
+                drawCloud(ctx, 800, 180);
+            }
+            
+            function drawBlock(ctx, x, y, size, color1, color2) {
+                // Draw block sides for 3D effect
+                ctx.fillStyle = color2;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + size/2, y - size/2);
+                ctx.lineTo(x + size/2 + size, y - size/2);
+                ctx.lineTo(x + size, y);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Draw block top
+                ctx.fillStyle = color1;
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + size/2, y - size/2);
+                ctx.lineTo(x + size/2, y - size/2 - size);
+                ctx.lineTo(x, y - size);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Draw block front
+                ctx.fillStyle = color1;
+                ctx.fillRect(x, y, size, -size);
+            }
+            
+            function drawTree(ctx, x, y) {
+                // Draw trunk
+                ctx.fillStyle = '#8B4513';
+                ctx.fillRect(x, y, 30, 100);
+                
+                // Draw leaves
+                ctx.fillStyle = '#228B22';
+                ctx.beginPath();
+                ctx.arc(x + 15, y - 50, 60, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            function drawCloud(ctx, x, y) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                ctx.beginPath();
+                ctx.arc(x, y, 30, 0, Math.PI * 2);
+                ctx.arc(x + 25, y - 10, 25, 0, Math.PI * 2);
+                ctx.arc(x + 50, y, 30, 0, Math.PI * 2);
+                ctx.arc(x + 25, y + 10, 20, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Initial draw
+            drawGame();
         }
-      </div>
-      <div class="file-info">
-        <div class="file-title">${f.title}</div>
-        <div class="file-name">${f.name}</div>
-        <div class="file-actions">
-          <button class="btn btn-outline download-btn">
-            <i class="fas fa-download"></i> Download
-          </button>
-        </div>
-      </div>
-    `;
-
-    // Download button
-    const downloadBtn = fileCard.querySelector('.download-btn');
-    downloadBtn.addEventListener('click', () => {
-      const a = document.createElement('a');
-      a.href = f.data;
-      a.download = f.name;
-      a.click();
-    });
-
-    fileList.appendChild(fileCard);
-  });
-}
-
-// --- Search Input ---
-searchInput.addEventListener('input', renderFiles);
-
-// --- YouTube Downloader Functions ---
-
-// Download type selection
-optionBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    optionBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentDownloadType = btn.dataset.type;
-    
-    // Update quality options if video data is already loaded
-    if (currentVideoData) {
-      updateQualityOptions();
-    }
-  });
-});
-
-// Fetch video info
-fetchVideoBtn.addEventListener('click', async () => {
-  const url = youtubeUrl.value.trim();
-  if (!url) {
-    alert('Please enter a YouTube URL');
-    return;
-  }
-  
-  // Validate YouTube URL
-  if (!isValidYouTubeUrl(url)) {
-    alert('Please enter a valid YouTube URL');
-    return;
-  }
-  
-  // Show loading state
-  fetchVideoBtn.disabled = true;
-  fetchVideoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching...';
-  
-  try {
-    // Call backend API to get video info
-    const response = await fetch(`${BACKEND_URL}/video-info`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ url: url })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch video information');
-    }
-    
-    const videoData = await response.json();
-    currentVideoData = videoData;
-    
-    // Update UI with video info
-    updateVideoInfo();
-    updateQualityOptions();
-    
-    // Show download info section
-    downloadInfo.classList.add('active');
-    
-  } catch (error) {
-    console.error('Error fetching video info:', error);
-    alert('Failed to fetch video information. Please check the URL and try again.');
-  } finally {
-    // Reset button
-    fetchVideoBtn.disabled = false;
-    fetchVideoBtn.innerHTML = '<i class="fas fa-search"></i> Fetch Video';
-  }
-});
-
-// Update video information in UI
-function updateVideoInfo() {
-  videoThumbnail.src = currentVideoData.thumbnail;
-  videoTitle.textContent = currentVideoData.title;
-  videoChannel.textContent = currentVideoData.channel;
-  videoDuration.textContent = currentVideoData.duration;
-}
-
-// Update quality options based on download type
-function updateQualityOptions() {
-  qualityOptions.innerHTML = '';
-  
-  const qualities = currentDownloadType === 'video' ? 
-    currentVideoData.videoQualities : 
-    currentVideoData.audioQualities;
-  
-  qualities.forEach(quality => {
-    const qualityBtn = document.createElement('button');
-    qualityBtn.classList.add('quality-btn');
-    qualityBtn.textContent = quality;
-    qualityBtn.dataset.quality = quality;
-    
-    // Select first quality by default
-    if (quality === qualities[0]) {
-      qualityBtn.classList.add('active');
-      selectedQuality = quality;
-    }
-    
-    qualityBtn.addEventListener('click', () => {
-      document.querySelectorAll('.quality-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      qualityBtn.classList.add('active');
-      selectedQuality = quality;
-      
-      // Enable download button
-      downloadBtn.disabled = false;
-    });
-    
-    qualityOptions.appendChild(qualityBtn);
-  });
-  
-  // Enable download button
-  downloadBtn.disabled = false;
-}
-
-// Download button handler
-downloadBtn.addEventListener('click', async () => {
-  if (!currentVideoData || !selectedQuality) {
-    alert('Please select a video and quality first');
-    return;
-  }
-  
-  // Show progress bar
-  downloadProgress.style.display = 'block';
-  downloadBtn.disabled = true;
-  
-  try {
-    // Call backend API to start download
-    const response = await fetch(`${BACKEND_URL}/download`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        url: youtubeUrl.value,
-        type: currentDownloadType,
-        quality: selectedQuality
-      })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to start download');
-    }
-    
-    // Get the download URL from the response
-    const downloadData = await response.json();
-    const downloadUrl = downloadData.downloadUrl;
-    
-    // Create a hidden link and trigger download
-    const a = document.createElement('a');
-    a.href = downloadUrl;
-    a.download = `${currentVideoData.title}.${currentDownloadType === 'video' ? 'mp4' : 'mp3'}`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    
-    // Update progress UI
-    progressFill.style.width = '100%';
-    progressText.textContent = 'Download complete!';
-    
-    // Reset download state after a delay
-    setTimeout(() => {
-      downloadProgress.style.display = 'none';
-      downloadBtn.disabled = false;
-      progressFill.style.width = '0%';
-      progressText.textContent = 'Preparing download...';
-    }, 3000);
-    
-  } catch (error) {
-    console.error('Error downloading file:', error);
-    alert('Failed to download file. Please try again.');
-    
-    // Reset download state
-    downloadProgress.style.display = 'none';
-    downloadBtn.disabled = false;
-    progressFill.style.width = '0%';
-    progressText.textContent = 'Preparing download...';
-  }
-});
-
-// Helper function to validate YouTube URL
-function isValidYouTubeUrl(url) {
-  const pattern = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})(\S*)?$/;
-  return pattern.test(url);
-}
-
-// Helper function to extract video ID from YouTube URL
-function extractVideoId(url) {
-  const pattern = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-  const match = url.match(pattern);
-  return match ? match[1] : null;
-}
-
-// Start the GIF animation sequence when page loads
-window.addEventListener('load', startGifSequence);
-
-// Initial render
-renderFiles();
-</script>
+    </script>
 </body>
 </html>
