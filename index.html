@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FileVault - Simple File Management</title>
+<title>FileVault - YouTube Downloader</title>
 <style>
 :root {
   --primary-color: #4a6cf7;
@@ -200,6 +200,236 @@ main {
   font-size: 0.7rem;
 }
 
+/* YouTube Downloader Section */
+.youtube-downloader {
+  background-color: white;
+  border-radius: var(--border-radius);
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: var(--box-shadow);
+}
+
+.youtube-downloader h2 {
+  margin-bottom: 20px;
+  color: var(--dark-color);
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.youtube-input-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.youtube-input-container input {
+  flex: 1;
+  padding: 12px 15px;
+  border: 1px solid #e1e5ee;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.youtube-input-container input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
+}
+
+.download-options {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.option-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: var(--light-color);
+  border: 1px solid #e1e5ee;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.option-btn:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(74, 108, 247, 0.05);
+}
+
+.option-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.download-info {
+  background-color: var(--light-color);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  margin-bottom: 20px;
+  display: none;
+}
+
+.download-info.active {
+  display: block;
+}
+
+.video-preview {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.thumbnail {
+  width: 120px;
+  height: 90px;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  background-color: #e1e5ee;
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-details {
+  flex: 1;
+}
+
+.video-title {
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: var(--dark-color);
+}
+
+.video-channel {
+  color: var(--secondary-color);
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+}
+
+.video-duration {
+  color: var(--secondary-color);
+  font-size: 0.8rem;
+}
+
+.quality-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.quality-btn {
+  padding: 8px 12px;
+  background-color: white;
+  border: 1px solid #e1e5ee;
+  border-radius: var(--border-radius);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.quality-btn:hover {
+  border-color: var(--primary-color);
+}
+
+.quality-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.download-progress {
+  margin-bottom: 15px;
+  display: none;
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: #e1e5ee;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--primary-color);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 0.8rem;
+  color: var(--secondary-color);
+  text-align: center;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-outline:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn:disabled {
+  background-color: var(--secondary-color);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 /* Upload Form */
 .upload-card {
   background-color: white;
@@ -283,47 +513,6 @@ main {
 .file-input-label i {
   font-size: 1.2rem;
   color: var(--primary-color);
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 12px 24px;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: var(--border-radius);
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.btn:hover {
-  background-color: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.btn:active {
-  transform: translateY(0);
-}
-
-.btn-block {
-  width: 100%;
-}
-
-.btn-outline {
-  background-color: transparent;
-  border: 1px solid var(--primary-color);
-  color: var(--primary-color);
-}
-
-.btn-outline:hover {
-  background-color: var(--primary-color);
-  color: white;
 }
 
 /* File List */
@@ -537,6 +726,23 @@ footer {
   .page-title h1 {
     font-size: 1.8rem;
   }
+  
+  .youtube-input-container {
+    flex-direction: column;
+  }
+  
+  .download-options {
+    flex-direction: column;
+  }
+  
+  .video-preview {
+    flex-direction: column;
+  }
+  
+  .thumbnail {
+    width: 100%;
+    height: 180px;
+  }
 }
 
 @media (max-width: 576px) {
@@ -605,6 +811,55 @@ footer {
     <div class="gif-display">
       <img id="gifImage" src="pic/niyy.gif" alt="Animated GIF">
       <div class="sound-status" id="soundStatus">ស្ងាត់</div>
+    </div>
+  </div>
+
+  <!-- YouTube Downloader -->
+  <div class="youtube-downloader">
+    <h2><i class="fab fa-youtube"></i> YouTube Downloader</h2>
+    
+    <div class="youtube-input-container">
+      <input type="text" id="youtubeUrl" placeholder="Paste YouTube URL here">
+      <button id="fetchVideoBtn" class="btn">
+        <i class="fas fa-search"></i> Fetch Video
+      </button>
+    </div>
+    
+    <div class="download-options">
+      <div class="option-btn active" data-type="video">
+        <i class="fas fa-video"></i> Download Video (MP4)
+      </div>
+      <div class="option-btn" data-type="audio">
+        <i class="fas fa-music"></i> Download Audio (MP3)
+      </div>
+    </div>
+    
+    <div class="download-info" id="downloadInfo">
+      <div class="video-preview">
+        <div class="thumbnail">
+          <img id="videoThumbnail" src="" alt="Video Thumbnail">
+        </div>
+        <div class="video-details">
+          <div class="video-title" id="videoTitle">Video Title</div>
+          <div class="video-channel" id="videoChannel">Channel Name</div>
+          <div class="video-duration" id="videoDuration">00:00</div>
+        </div>
+      </div>
+      
+      <div class="quality-options" id="qualityOptions">
+        <!-- Quality options will be added here dynamically -->
+      </div>
+      
+      <div class="download-progress" id="downloadProgress">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">Preparing download...</div>
+      </div>
+      
+      <button id="downloadBtn" class="btn btn-block" disabled>
+        <i class="fas fa-download"></i> Download
+      </button>
     </div>
   </div>
 
@@ -678,8 +933,26 @@ const soundEffect = document.getElementById('soundEffect');
 const soundAlert = document.getElementById('soundAlert');
 const soundStatus = document.getElementById('soundStatus');
 
+// YouTube Downloader Elements
+const youtubeUrl = document.getElementById('youtubeUrl');
+const fetchVideoBtn = document.getElementById('fetchVideoBtn');
+const optionBtns = document.querySelectorAll('.option-btn');
+const downloadInfo = document.getElementById('downloadInfo');
+const videoThumbnail = document.getElementById('videoThumbnail');
+const videoTitle = document.getElementById('videoTitle');
+const videoChannel = document.getElementById('videoChannel');
+const videoDuration = document.getElementById('videoDuration');
+const qualityOptions = document.getElementById('qualityOptions');
+const downloadProgress = document.getElementById('downloadProgress');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+const downloadBtn = document.getElementById('downloadBtn');
+
 let filesData = JSON.parse(localStorage.getItem('filesData') || '[]');
 let currentMenu = 'home';
+let currentDownloadType = 'video';
+let currentVideoData = null;
+let selectedQuality = null;
 
 // Function to show sound alert
 function showSoundAlert() {
@@ -871,6 +1144,185 @@ function renderFiles() {
 
 // --- Search Input ---
 searchInput.addEventListener('input', renderFiles);
+
+// --- YouTube Downloader Functions ---
+
+// Download type selection
+optionBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    optionBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentDownloadType = btn.dataset.type;
+    
+    // Update quality options if video data is already loaded
+    if (currentVideoData) {
+      updateQualityOptions();
+    }
+  });
+});
+
+// Fetch video info
+fetchVideoBtn.addEventListener('click', () => {
+  const url = youtubeUrl.value.trim();
+  if (!url) {
+    alert('Please enter a YouTube URL');
+    return;
+  }
+  
+  // Validate YouTube URL
+  if (!isValidYouTubeUrl(url)) {
+    alert('Please enter a valid YouTube URL');
+    return;
+  }
+  
+  // Show loading state
+  fetchVideoBtn.disabled = true;
+  fetchVideoBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fetching...';
+  
+  // In a real implementation, you would call your backend API here
+  // For this demo, we'll simulate the API call with a timeout
+  
+  setTimeout(() => {
+    // Simulate successful response
+    const videoId = extractVideoId(url);
+    
+    // Mock video data for demonstration
+    currentVideoData = {
+      id: videoId,
+      title: 'Sample YouTube Video',
+      channel: 'Sample Channel',
+      duration: '10:30',
+      thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+      qualities: currentDownloadType === 'video' ? 
+        ['1080p', '720p', '480p', '360p'] : 
+        ['128kbps', '192kbps', '320kbps']
+    };
+    
+    // Update UI with video info
+    updateVideoInfo();
+    updateQualityOptions();
+    
+    // Show download info section
+    downloadInfo.classList.add('active');
+    
+    // Reset button
+    fetchVideoBtn.disabled = false;
+    fetchVideoBtn.innerHTML = '<i class="fas fa-search"></i> Fetch Video';
+  }, 1500);
+});
+
+// Update video information in UI
+function updateVideoInfo() {
+  videoThumbnail.src = currentVideoData.thumbnail;
+  videoTitle.textContent = currentVideoData.title;
+  videoChannel.textContent = currentVideoData.channel;
+  videoDuration.textContent = currentVideoData.duration;
+}
+
+// Update quality options based on download type
+function updateQualityOptions() {
+  qualityOptions.innerHTML = '';
+  
+  currentVideoData.qualities.forEach(quality => {
+    const qualityBtn = document.createElement('button');
+    qualityBtn.classList.add('quality-btn');
+    qualityBtn.textContent = quality;
+    qualityBtn.dataset.quality = quality;
+    
+    // Select first quality by default
+    if (quality === currentVideoData.qualities[0]) {
+      qualityBtn.classList.add('active');
+      selectedQuality = quality;
+    }
+    
+    qualityBtn.addEventListener('click', () => {
+      document.querySelectorAll('.quality-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      qualityBtn.classList.add('active');
+      selectedQuality = quality;
+      
+      // Enable download button
+      downloadBtn.disabled = false;
+    });
+    
+    qualityOptions.appendChild(qualityBtn);
+  });
+  
+  // Enable download button
+  downloadBtn.disabled = false;
+}
+
+// Download button handler
+downloadBtn.addEventListener('click', () => {
+  if (!currentVideoData || !selectedQuality) {
+    alert('Please select a video and quality first');
+    return;
+  }
+  
+  // Show progress bar
+  downloadProgress.style.display = 'block';
+  downloadBtn.disabled = true;
+  
+  // Simulate download progress
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.random() * 10;
+    if (progress >= 100) {
+      progress = 100;
+      clearInterval(interval);
+      
+      // Update progress UI
+      progressFill.style.width = `${progress}%`;
+      progressText.textContent = 'Download complete!';
+      
+      // Create a mock file download
+      setTimeout(() => {
+        const fileName = `${currentVideoData.title.replace(/\s+/g, '_')}.${currentDownloadType === 'video' ? 'mp4' : 'mp3'}`;
+        
+        // In a real implementation, this would be the actual file data
+        // For this demo, we'll create a fake blob to simulate download
+        const fakeData = 'This is a simulated file download. In a real implementation, this would be the actual video/audio file.';
+        const blob = new Blob([fakeData], {type: currentDownloadType === 'video' ? 'video/mp4' : 'audio/mpeg'});
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        // Reset download state
+        setTimeout(() => {
+          downloadProgress.style.display = 'none';
+          downloadBtn.disabled = false;
+          progressFill.style.width = '0%';
+          progressText.textContent = 'Preparing download...';
+        }, 2000);
+        
+      }, 1000);
+    } else {
+      // Update progress UI
+      progressFill.style.width = `${progress}%`;
+      progressText.textContent = `Downloading... ${Math.round(progress)}%`;
+    }
+  }, 200);
+});
+
+// Helper function to validate YouTube URL
+function isValidYouTubeUrl(url) {
+  const pattern = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})(\S*)?$/;
+  return pattern.test(url);
+}
+
+// Helper function to extract video ID from YouTube URL
+function extractVideoId(url) {
+  const pattern = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const match = url.match(pattern);
+  return match ? match[1] : null;
+}
 
 // Start the GIF animation sequence when page loads
 window.addEventListener('load', startGifSequence);
