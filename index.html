@@ -1,41 +1,757 @@
 <!DOCTYPE html>
-<html lang="km">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Funan app</title>
-<link rel="icon" type="image/png" href="pic/logofn.png">
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
-  }
-  #logo {
-    width: 200px;
-    opacity: 1;
-    transition: opacity 1s ease;
-  }
-</style>
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    // After 4s, fade out logo
-    setTimeout(() => {
-      document.getElementById("logo").style.opacity = "0";
-    }, 4000);
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Funan Launcher – Minecraft Client</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏️</text></svg>" />
+    <style>
+        /* ── Reset & Base ── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    // After 6s, redirect same tab
-    setTimeout(() => {
-      window.location.href = "https://hoter.liveblog365.com/index.php";
-    }, 6000);
-  });
-</script>
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0d0f14;
+            color: #e4e8ee;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image:
+                radial-gradient(ellipse at 20% 50%, rgba(52, 152, 219, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(46, 204, 113, 0.04) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 100%, rgba(155, 89, 182, 0.05) 0%, transparent 50%);
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a1e26;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2ecc71;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #27ae60;
+        }
+
+        /* ── Container ── */
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            padding: 0 24px;
+            margin: 0 auto;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Header ── */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 0 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #f1c40f, #e67e22);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+            -webkit-text-fill-color: initial;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .nav-links a {
+            color: #a0a8b8;
+            text-decoration: none;
+            transition: color 0.25s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #2ecc71;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: #fff;
+        }
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* ── Hero ── */
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 56px 0 40px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(46, 204, 113, 0.12);
+            border: 1px solid rgba(46, 204, 113, 0.25);
+            border-radius: 100px;
+            padding: 6px 18px 6px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2ecc71;
+            letter-spacing: 0.3px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(4px);
+        }
+
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2ecc71;
+            animation: pulse-dot 1.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(0.8);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.6rem, 8vw, 4.8rem);
+            font-weight: 900;
+            line-height: 1.08;
+            letter-spacing: -1.5px;
+            max-width: 820px;
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, #f1c40f, #e67e22);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero h1 .highlight-green {
+            background: linear-gradient(135deg, #2ecc71, #1abc9c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: #9098a8;
+            max-width: 600px;
+            margin-top: 18px;
+            line-height: 1.7;
+        }
+
+        /* ── Download Card ── */
+        .download-card {
+            margin-top: 36px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 32px 40px;
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 28px 40px;
+            width: 100%;
+            max-width: 720px;
+            transition: border-color 0.3s;
+        }
+
+        .download-card:hover {
+            border-color: rgba(46, 204, 113, 0.2);
+        }
+
+        .download-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .download-info .file-icon {
+            font-size: 42px;
+            line-height: 1;
+        }
+
+        .download-info .file-details {
+            text-align: left;
+        }
+
+        .download-info .file-details .name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .download-info .file-details .meta {
+            font-size: 13px;
+            color: #707888;
+            display: flex;
+            gap: 16px;
+            margin-top: 2px;
+        }
+
+        .download-info .file-details .meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #2ecc71, #1abc9c);
+            color: #fff;
+            border: none;
+            padding: 14px 34px;
+            border-radius: 60px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 8px 30px rgba(46, 204, 113, 0.25);
+            letter-spacing: 0.3px;
+            flex-shrink: 0;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 14px 40px rgba(46, 204, 113, 0.35);
+            background: linear-gradient(135deg, #27ae60, #16a085);
+        }
+
+        .btn-download:active {
+            transform: scale(0.97);
+        }
+
+        .btn-download .arrow {
+            transition: transform 0.3s;
+        }
+
+        .btn-download:hover .arrow {
+            transform: translateX(4px);
+        }
+
+        /* ── Features Grid ── */
+        .features {
+            padding: 60px 0 20px;
+        }
+
+        .features .section-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 12px;
+        }
+
+        .features .section-sub {
+            text-align: center;
+            color: #808898;
+            font-size: 1.05rem;
+            margin-bottom: 44px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 28px 22px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .feature-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(46, 204, 113, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .feature-item .icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .feature-item h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+
+        .feature-item p {
+            font-size: 14px;
+            color: #808898;
+            line-height: 1.5;
+        }
+
+        /* ── System Requirements ── */
+        .requirements {
+            padding: 40px 0 30px;
+        }
+
+        .requirements .section-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 32px;
+        }
+
+        .req-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .req-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 18px 20px;
+            text-align: center;
+        }
+
+        .req-item .label {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #5a6272;
+            font-weight: 600;
+        }
+
+        .req-item .value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e4e8ee;
+            margin-top: 4px;
+        }
+
+        /* ── Footer ── */
+        footer {
+            margin-top: 40px;
+            padding: 28px 0 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #606878;
+        }
+
+        footer .socials {
+            display: flex;
+            gap: 18px;
+        }
+
+        footer .socials a {
+            color: #606878;
+            text-decoration: none;
+            transition: color 0.25s;
+            font-size: 18px;
+        }
+
+        footer .socials a:hover {
+            color: #e4e8ee;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 700px) {
+            header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .nav-links {
+                gap: 18px;
+                font-size: 14px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .download-card {
+                flex-direction: column;
+                padding: 24px 20px;
+                text-align: center;
+            }
+
+            .download-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .download-info .file-details .meta {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .btn-download {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 460px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .req-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* ── Notification toast ── */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #1a1e26;
+            border: 1px solid rgba(46, 204, 113, 0.25);
+            color: #e4e8ee;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: 0 12px 50px rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 999;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast .check {
+            color: #2ecc71;
+            font-size: 20px;
+        }
+    </style>
 </head>
 <body>
-  <img id="logo" src="pic/logofn.png" alt="Logo">
+
+    <div class="container">
+
+        <!-- ─── Header ─── -->
+        <header>
+            <div class="logo">
+                <span class="logo-icon">⛏️</span>
+                Funan Launcher
+            </div>
+            <div class="nav-links">
+                <a href="#" class="active">Home</a>
+                <a href="#features">Features</a>
+                <a href="#requirements">Requirements</a>
+                <a href="#download">Download</a>
+            </div>
+        </header>
+
+        <!-- ─── Hero ─── -->
+        <section class="hero">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                v2.5.1 · Latest Release
+            </div>
+            <h1>
+                The Ultimate<br />
+                <span class="highlight">Minecraft</span>
+                <span class="highlight-green">Launcher</span>
+            </h1>
+            <p>
+                Fast, lightweight, and packed with features — Funan Launcher gives
+                you the best Minecraft experience with one-click mod support,
+                performance boosts, and a clean UI.
+            </p>
+
+            <!-- ─── Download Card ─── -->
+            <div class="download-card" id="download">
+                <div class="download-info">
+                    <span class="file-icon">📦</span>
+                    <div class="file-details">
+                        <div class="name">Funan Launcher.exe</div>
+                        <div class="meta">
+                            <span>📁 48 MB</span>
+                            <span>🪟 Windows 10+</span>
+                            <span>⚡ v2.5.1</span>
+                        </div>
+                    </div>
+                </div>
+                <a href="#" class="btn-download" id="downloadBtn">
+                    Download Now
+                    <span class="arrow">→</span>
+                </a>
+            </div>
+
+            <p style="margin-top:18px;font-size:14px;color:#5a6272;">
+                🔒 Safe · Open Source · No malware
+            </p>
+        </section>
+
+        <!-- ─── Features ─── -->
+        <section class="features" id="features">
+            <h2 class="section-title">⚡ Why Funan Launcher?</h2>
+            <p class="section-sub">Everything you need to jump into the world of blocks</p>
+
+            <div class="features-grid">
+                <div class="feature-item">
+                    <span class="icon">🚀</span>
+                    <h3>Lightning Fast</h3>
+                    <p>Optimized startup and memory usage — launch in seconds.</p>
+                </div>
+                <div class="feature-item">
+                    <span class="icon">🧩</span>
+                    <h3>Mod Manager</h3>
+                    <p>Browse, install, and update mods with a single click.</p>
+                </div>
+                <div class="feature-item">
+                    <span class="icon">🎮</span>
+                    <h3>Multi-Version</h3>
+                    <p>Supports all Minecraft versions from 1.8 to the latest.</p>
+                </div>
+                <div class="feature-item">
+                    <span class="icon">🛡️</span>
+                    <h3>Secure &amp; Private</h3>
+                    <p>No trackers, no bloatware — just pure Minecraft.</p>
+                </div>
+                <div class="feature-item">
+                    <span class="icon">🎨</span>
+                    <h3>Custom Skins</h3>
+                    <p>Easily change your skin and cape in one place.</p>
+                </div>
+                <div class="feature-item">
+                    <span class="icon">📊</span>
+                    <h3>Performance Stats</h3>
+                    <p>Live FPS counter, RAM usage, and optimization tips.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── Requirements ─── -->
+        <section class="requirements" id="requirements">
+            <h2 class="section-title">🖥️ System Requirements</h2>
+            <div class="req-grid">
+                <div class="req-item">
+                    <div class="label">OS</div>
+                    <div class="value">Windows 10 / 11</div>
+                </div>
+                <div class="req-item">
+                    <div class="label">Processor</div>
+                    <div class="value">Intel Core i3+</div>
+                </div>
+                <div class="req-item">
+                    <div class="label">Memory</div>
+                    <div class="value">4 GB RAM (8 GB rec.)</div>
+                </div>
+                <div class="req-item">
+                    <div class="label">Graphics</div>
+                    <div class="value">OpenGL 3.3+</div>
+                </div>
+                <div class="req-item">
+                    <div class="label">Storage</div>
+                    <div class="value">500 MB free</div>
+                </div>
+                <div class="req-item">
+                    <div class="label">Java</div>
+                    <div class="value">Java 17+ included</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ─── Footer ─── -->
+        <footer>
+            <span>© 2026 Funan Launcher · Made for the community</span>
+            <div class="socials">
+                <a href="#" aria-label="GitHub">🐙</a>
+                <a href="#" aria-label="Discord">💬</a>
+                <a href="#" aria-label="Twitter">🐦</a>
+                <a href="#" aria-label="YouTube">▶️</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ─── Toast Notification ─── -->
+    <div class="toast" id="toast">
+        <span class="check">✅</span>
+        <span id="toastMessage">Download started!</span>
+    </div>
+
+    <script>
+        // ── Download Button Logic ──
+        const downloadBtn = document.getElementById('downloadBtn');
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toastMessage');
+        let toastTimeout;
+
+        function showToast(msg) {
+            toastMsg.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3200);
+        }
+
+        downloadBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            // Simulate download start
+            showToast('⏳ Preparing your download...');
+
+            // After a short delay, trigger the actual download
+            setTimeout(() => {
+                // Create a Blob with a dummy .exe content (or you can replace with real URL)
+                // In a real scenario, you'd point to the actual file URL.
+                // For this demo, we create a text file to simulate.
+                const content = 'Funan Launcher v2.5.1\n\n' +
+                    'This is a simulated download.\n' +
+                    'Replace this with your actual Funan Launcher.exe file.\n\n' +
+                    'Visit the GitHub repository for the real release.';
+
+                const blob = new Blob([content], { type: 'application/octet-stream' });
+                const url = URL.createObjectURL(blob);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'Funan_Launcher.exe';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Clean up the URL
+                setTimeout(() => URL.revokeObjectURL(url), 5000);
+
+                showToast('✅ Download started! Check your browser.');
+            }, 800);
+        });
+
+        // ── Smooth scroll for nav links ──
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const targetId = link.getAttribute('href');
+                if (targetId && targetId.startsWith('#')) {
+                    e.preventDefault();
+                    const target = document.querySelector(targetId);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            });
+        });
+
+        // ── Active nav highlight on scroll ──
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const top = section.offsetTop - 120;
+                if (window.scrollY >= top) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        console.log('⛏️ Funan Launcher website loaded successfully!');
+    </script>
+
 </body>
 </html>
