@@ -572,7 +572,7 @@
                 <span class="highlight-green">ដ៏ល្អបំផុត</span>
             </h1>
             <p>
-                លឿន ស្រាល និងសម្បូរមុខងារ — Funan Launcher ផ្តល់នូវបទពិសោធន៍ Minecraft ល្អបំផុត 
+                លឿន ស្រាល និងសម្បូរមុខងារ — Funan Launcher ផ្តល់នូវបទពិសោធន៍ Minecraft ល្អបំផុត
                 ជាមួយនឹងការគាំទ្រម៉ូដមួយចុច បង្កើនល្បឿន និងចំណុចប្រទាក់ស្អាត។
             </p>
 
@@ -636,7 +636,6 @@
                     <h3>ស្ថិតិដំណើរការ</h3>
                     <p>បង្ហាញ FPS ផ្ទាល់ ការប្រើប្រាស់ RAM និងគន្លឹះបង្កើនប្រសិទ្ធភាព។</p>
                 </div>
-                <!-- ✅ មុខងារថ្មី: វេទិកាជជែក -->
                 <div class="feature-item">
                     <span class="icon">💬</span>
                     <h3>វេទិកាជជែក</h3>
@@ -711,31 +710,48 @@
             }, 3200);
         }
 
-        downloadBtn.addEventListener('click', (e) => {
+        // ── REAL DOWNLOAD from local folder "pic/Funan Launcher.exe" ──
+        downloadBtn.addEventListener('click', async (e) => {
             e.preventDefault();
+
+            const filePath = 'pic/Funan Launcher.exe';
 
             showToast('⏳ កំពុងរៀបចំឯកសារ...');
 
-            setTimeout(() => {
-                const content = 'Funan Launcher v3.3.0\n\n' +
-                    'នេះគឺជាការក្លែងធ្វើការទាញយក។\n' +
-                    'សូមជំនួសវាជាមួយឯកសារ Funan Launcher.exe ពិតប្រាកដរបស់អ្នក។\n\n' +
-                    'ចូលទៅកាន់ GitHub ដើម្បីទទួលបានកំណែផ្លូវការ។';
+            try {
+                // Fetch the actual .exe file from the local 'pic' folder
+                const response = await fetch(filePath);
 
-                const blob = new Blob([content], { type: 'application/octet-stream' });
+                if (!response.ok) {
+                    // If file not found, show error and fallback to direct navigation
+                    showToast('❌ រកមិនឃើញឯកសារ! សូមពិនិត្យផ្លូវ។');
+                    console.error('File not found:', filePath);
+                    return;
+                }
+
+                // Get the file as a blob
+                const blob = await response.blob();
                 const url = URL.createObjectURL(blob);
 
+                // Create a temporary anchor and trigger download
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = 'Funan_Launcher.exe';
+                link.download = 'Funan_Launcher.exe'; // Force .exe extension
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
 
+                // Clean up the object URL after a delay
                 setTimeout(() => URL.revokeObjectURL(url), 5000);
 
                 showToast('✅ ចាប់ផ្ដើមទាញយក! សូមពិនិត្យមើលកម្មវិធីរុករករបស់អ្នក។');
-            }, 800);
+
+            } catch (err) {
+                // Fallback: try direct navigation if fetch fails (CORS, etc.)
+                console.warn('Fetch failed, falling back to direct navigation:', err);
+                window.location.href = filePath;
+                showToast('⬇️ កំពុងបញ្ជូនបន្តទៅកាន់ឯកសារ...');
+            }
         });
 
         // ── Smooth scroll for nav links ──
@@ -774,6 +790,7 @@
         });
 
         console.log('⛏️ គេហទំព័រ Funan Launcher បានផ្ទុកដោយជោគជ័យ!');
+        console.log('📁 ឯកសារទាញយក៖ pic/Funan Launcher.exe');
     </script>
 
 </body>
