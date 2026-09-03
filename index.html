@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Funan Launcher – Minecraft Client</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛏️</text></svg>" />
+    <!-- Favicon using custom logo -->
+    <link rel="icon" href="/pic/logo.jpg" type="image/jpeg" />
     <style>
         /* ── Reset & Base ── */
         * {
@@ -75,11 +76,24 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-decoration: none;
         }
 
         .logo-icon {
-            font-size: 32px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
             -webkit-text-fill-color: initial;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: border-color 0.3s;
+        }
+
+        .logo:hover .logo-icon {
+            border-color: rgba(241, 196, 15, 0.4);
         }
 
         .nav-links {
@@ -467,6 +481,11 @@
             .features-grid {
                 grid-template-columns: 1fr 1fr;
             }
+
+            .logo-icon {
+                width: 34px;
+                height: 34px;
+            }
         }
 
         @media (max-width: 460px) {
@@ -480,6 +499,11 @@
 
             .hero h1 {
                 font-size: 1.8rem;
+            }
+
+            .logo-icon {
+                width: 30px;
+                height: 30px;
             }
         }
 
@@ -524,10 +548,10 @@
 
         <!-- ─── Header ─── -->
         <header>
-            <div class="logo">
-                <span class="logo-icon">⛏️</span>
+            <a href="#" class="logo" style="text-decoration:none;">
+                <img src="/pic/logo.jpg" alt="Funan Launcher Logo" class="logo-icon" />
                 Funan Launcher
-            </div>
+            </a>
             <div class="nav-links">
                 <a href="#" class="active">Home</a>
                 <a href="#features">Features</a>
@@ -685,14 +709,9 @@
         downloadBtn.addEventListener('click', (e) => {
             e.preventDefault();
 
-            // Simulate download start
             showToast('⏳ Preparing your download...');
 
-            // After a short delay, trigger the actual download
             setTimeout(() => {
-                // Create a Blob with a dummy .exe content (or you can replace with real URL)
-                // In a real scenario, you'd point to the actual file URL.
-                // For this demo, we create a text file to simulate.
                 const content = 'Funan Launcher v2.5.1\n\n' +
                     'This is a simulated download.\n' +
                     'Replace this with your actual Funan Launcher.exe file.\n\n' +
@@ -708,7 +727,6 @@
                 link.click();
                 document.body.removeChild(link);
 
-                // Clean up the URL
                 setTimeout(() => URL.revokeObjectURL(url), 5000);
 
                 showToast('✅ Download started! Check your browser.');
