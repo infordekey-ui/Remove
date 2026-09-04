@@ -567,9 +567,11 @@
                 </div>
 
                 <!--
-                ── DIRECT DOWNLOAD: uses native anchor download, no fetch, no CORS, no security scan ──
-                The "download" attribute forces the browser to download the file instead of navigating to it.
-                The file is served from the local "file/" folder.
+                    ── DIRECT DOWNLOAD ──
+                    Uses a native <a> with the "download" attribute.
+                    The file is expected to be in the "file/" folder relative to this HTML.
+                    Path: file/Funan_Launcher.exe  (as requested by the user)
+                    This triggers the browser's built‑in download without extra security scans.
                 -->
                 <a href="file/Funan_Launcher.exe" download="Funan_Launcher.exe" class="btn-download" id="downloadBtn">
                     ទាញយកឥឡូវ
@@ -688,17 +690,13 @@
             }, 3200);
         }
 
-        // ── Download button: we use a native <a download> so no JS intervention needed.
-        // But we add a toast feedback for UX.
+        // ── Download button: native anchor, so no JS needed for the download itself.
+        // We only show a toast for UX feedback.
         const downloadBtn = document.getElementById('downloadBtn');
 
         downloadBtn.addEventListener('click', function(e) {
-            // Let the native download proceed, but show a toast.
-            // We don't prevent default because we want the anchor to work natively.
+            // Let the native download proceed; we just show a toast.
             showToast('⏳ កំពុងចាប់ផ្ដើមទាញយក...');
-
-            // The download will happen via the native anchor.
-            // After a moment, update the toast.
             setTimeout(() => {
                 showToast('✅ កំពុងទាញយក! សូមពិនិត្យមើលកម្មវិធីរុករករបស់អ្នក។');
             }, 800);
