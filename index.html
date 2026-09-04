@@ -1,9 +1,19 @@
+ខ្ញុំបានធ្វើបច្ចុប្បន្នភាពឯកសារ HTML របស់អ្នកដោយបន្ថែមកំណែ v3.6.0 ជាកំណែថ្មីបំផុត ហើយដាក់កំណែ v3.3.0 ចាស់ជាតំណភ្ជាប់បន្ទាប់បន្សំតូចមួយ ដើម្បីកុំឱ្យលេចធ្លោជាងកំណែថ្មី។
+
+## ការផ្លាស់ប្តូរសំខាន់ៗ
+
+- **ធ្វើបច្ចុប្បន្នភាពកំណែទៅ v3.6.0** – ប្តូរឈ្មោះឯកសារ និងតំណភ្ជាប់ទាញយកទៅជា `Funan_Launcher_v3.6.0.exe`
+- **បង្ហាញកំណែចាស់ v3.3.0** – ដាក់តំណភ្ជាប់ទាញយកកំណែចាស់ជាអក្សរតូច និងពណ៌មិនសូវភ្លឺ នៅក្រោមប៊ូតុងទាញយក
+- **ធ្វើបច្ចុប្បន្នភាពអត្ថបទ "Latest Release"** – ប្តូរពី v3.3.0 ទៅ v3.6.0 នៅក្នុង Hero Badge
+- **រក្សាមុខងារភាសាពីរ** – គាំទ្រទាំងភាសាខ្មែរ និងអង់គ្លេស សម្រាប់អត្ថបទកំណែចាស់ផងដែរ
+
+```html
 <!DOCTYPE html>
 <html lang="km">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Funan Launcher – Minecraft Client Launcher (v3.3.0)</title>
+    <title>Funan Launcher – Minecraft Client Launcher (v3.6.0)</title>
     <link rel="icon" href="pic/logo.jpg" type="image/jpeg" />
 
     <!-- Font Awesome 6 (Professional Icons) -->
@@ -443,6 +453,29 @@
             color: var(--accent-green);
         }
 
+        /* ── Old version link ── */
+        .old-version-wrap {
+            margin-top: 12px;
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .old-version-wrap a {
+            color: var(--text-muted);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            transition: color var(--transition);
+        }
+
+        .old-version-wrap a:hover {
+            color: var(--text-secondary);
+        }
+
         /* ── Features ── */
         .features {
             padding: 56px 0 20px;
@@ -726,6 +759,9 @@
                 font-size: 12px;
                 padding: 4px 14px 4px 10px;
             }
+            .old-version-wrap {
+                font-size: 12px;
+            }
         }
 
         /* ── Utility ── */
@@ -783,8 +819,8 @@
         <section class="hero">
             <div class="hero-badge">
                 <span class="dot-pulse"></span>
-                <span class="km-only">កំណែ v3.3.0 · ចេញថ្មីបំផុត</span>
-                <span class="en-only">v3.3.0 · Latest Release</span>
+                <span class="km-only">កំណែ v3.6.0 · ចេញថ្មីបំផុត</span>
+                <span class="en-only">v3.6.0 · Latest Release</span>
             </div>
 
             <h1>
@@ -811,20 +847,27 @@
                         <i class="fas fa-cube"></i>
                     </div>
                     <div class="download-details">
-                        <div class="name">Funan_Launcher_v3.3.0.exe</div>
+                        <div class="name">Funan_Launcher_v3.6.0.exe</div>
                         <div class="meta">
                             <span><i class="fas fa-hdd"></i> 20 MB</span>
                             <span><i class="fab fa-windows"></i> <span class="km-only">វីនដូ</span><span class="en-only">Windows</span></span>
-                            <span><i class="fas fa-tag"></i> v3.3.0</span>
+                            <span><i class="fas fa-tag"></i> v3.6.0</span>
                         </div>
                     </div>
                 </div>
 
-                <a href="file/Funan_Launcher.exe" download="Funan_Launcher.exe" class="btn-download" id="downloadBtn">
+                <a href="file/Funan_Launcher_v3.6.0.exe" download="Funan_Launcher_v3.6.0.exe" class="btn-download" id="downloadBtn">
                     <span class="km-only">ទាញយកឥឡូវ</span>
                     <span class="en-only">Download Now</span>
                     <i class="fas fa-arrow-right"></i>
                 </a>
+            </div>
+
+            <!-- Old version link (subtle) -->
+            <div class="old-version-wrap">
+                <span class="km-only"><i class="fas fa-history"></i> ទាញយកកំណែចាស់</span>
+                <span class="en-only"><i class="fas fa-history"></i> Download older version</span>
+                <a href="file/Funan_Launcher_v3.3.0.exe" download="Funan_Launcher_v3.3.0.exe">v3.3.0</a>
             </div>
 
             <div class="hero-secure">
@@ -1074,8 +1117,9 @@
         });
 
         // ── Console signature ──
-        console.log('⛏️ Funan Launcher v3.3.0 — Built for the community.');
+        console.log('⛏️ Funan Launcher v3.6.0 — Built for the community.');
     </script>
 
 </body>
 </html>
+```
