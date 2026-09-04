@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Funan Launcher – កម្មវិធីបើកហ្គេម Minecraft client funan client play with friendl client </title>
+    <title>Funan Launcher – កម្មវិធីបើកហ្គេម Minecraft client funan client play with friendl client</title>
     <!-- រូបសញ្ញាផ្ទាល់ខ្លួន -->
     <link rel="icon" href="pic/logo.jpg" type="image/jpeg" />
     <style>
@@ -710,48 +710,27 @@
             }, 3200);
         }
 
-        // ── REAL DOWNLOAD from local folder "pic/Funan Launcher.exe" ──
-        downloadBtn.addEventListener('click', async (e) => {
+        // ── Direct download using anchor tag (no fetch, no CORS) ──
+        downloadBtn.addEventListener('click', (e) => {
             e.preventDefault();
 
+            // Path to your .exe file – adjust if needed (e.g., 'file/Funan Launcher.exe')
             const filePath = 'file/Funan Launcher.exe';
 
-            showToast('⏳ កំពុងរៀបចំឯកសារ...');
+            showToast('⏳ កំពុងចាប់ផ្ដើមទាញយក...');
 
-            try {
-                // Fetch the actual .exe file from the local 'pic' folder
-                const response = await fetch(filePath);
+            // Create a temporary anchor and trigger the download
+            const link = document.createElement('a');
+            link.href = filePath;
+            link.download = 'Funan_Launcher.exe';   // forces download with this name
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
 
-                if (!response.ok) {
-                    // If file not found, show error and fallback to direct navigation
-                    showToast('❌ រកមិនឃើញឯកសារ! សូមពិនិត្យផ្លូវ។');
-                    console.error('File not found:', filePath);
-                    return;
-                }
-
-                // Get the file as a blob
-                const blob = await response.blob();
-                const url = URL.createObjectURL(blob);
-
-                // Create a temporary anchor and trigger download
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'Funan_Launcher.exe'; // Force .exe extension
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-
-                // Clean up the object URL after a delay
-                setTimeout(() => URL.revokeObjectURL(url), 5000);
-
+            // Update toast after a short delay
+            setTimeout(() => {
                 showToast('✅ ចាប់ផ្ដើមទាញយក! សូមពិនិត្យមើលកម្មវិធីរុករករបស់អ្នក។');
-
-            } catch (err) {
-                // Fallback: try direct navigation if fetch fails (CORS, etc.)
-                console.warn('Fetch failed, falling back to direct navigation:', err);
-                window.location.href = filePath;
-                showToast('⬇️ កំពុងបញ្ជូនបន្តទៅកាន់ឯកសារ...');
-            }
+            }, 500);
         });
 
         // ── Smooth scroll for nav links ──
