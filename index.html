@@ -1,6 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="km">
+<html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,10 +9,10 @@
     <!-- Font Awesome 6 (Professional Icons) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-    <!-- Google Fonts: Inter + Khmer OS Battambang -->
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&family=Battambang:wght@400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800;14..32,900&display=swap" rel="stylesheet" />
 
     <style>
         /* ── Reset & Base ── */
@@ -52,7 +51,7 @@
         }
 
         body {
-            font-family: 'Inter', 'Battambang', system-ui, sans-serif;
+            font-family: 'Inter', system-ui, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
@@ -83,11 +82,6 @@
             margin: 0 auto;
             padding: 0 28px;
             width: 100%;
-        }
-
-        /* ── Typography ── */
-        .font-khmer {
-            font-family: 'Battambang', 'Inter', system-ui, sans-serif;
         }
 
         /* ── Header ── */
@@ -136,49 +130,6 @@
             display: flex;
             align-items: center;
             gap: 18px;
-        }
-
-        /* ── Language Toggle ── */
-        .lang-toggle {
-            display: flex;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-subtle);
-            border-radius: 40px;
-            padding: 3px;
-            gap: 2px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .lang-toggle-btn {
-            background: transparent;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all var(--transition);
-            font-family: inherit;
-            letter-spacing: 0.3px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .lang-toggle-btn.active {
-            color: #fff;
-            background: rgba(46, 204, 113, 0.18);
-            box-shadow: inset 0 0 0 1px rgba(46, 204, 113, 0.15);
-        }
-
-        .lang-toggle-btn:hover:not(.active) {
-            color: var(--text-secondary);
-        }
-
-        .lang-toggle-btn i {
-            margin-right: 6px;
-            font-size: 12px;
         }
 
         /* ── Navigation ── */
@@ -585,6 +536,11 @@
             margin-top: 2px;
         }
 
+        .req-item .value .rec {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
         /* ── Footer ── */
         footer {
             margin-top: 44px;
@@ -607,7 +563,6 @@
         footer .socials a {
             color: var(--text-muted);
             text-decoration: none;
-            transition: color var(--transition);
             font-size: 18px;
             width: 36px;
             height: 36px;
@@ -701,10 +656,6 @@
                 width: 100%;
                 justify-content: center;
             }
-            .lang-toggle-btn {
-                padding: 5px 12px;
-                font-size: 12px;
-            }
         }
 
         @media (max-width: 500px) {
@@ -766,13 +717,6 @@
             clip: rect(0, 0, 0, 0);
             border: 0;
         }
-
-        .lang-kh .en-only {
-            display: none !important;
-        }
-        .lang-en .km-only {
-            display: none !important;
-        }
     </style>
 </head>
 <body>
@@ -787,21 +731,11 @@
             </a>
 
             <div class="header-controls">
-                <!-- Language Toggle -->
-                <div class="lang-toggle" role="group" aria-label="Language toggle">
-                    <button class="lang-toggle-btn active" data-lang="km" aria-pressed="true">
-                        <i class="fas fa-language"></i> ភាសាខ្មែរ
-                    </button>
-                    <button class="lang-toggle-btn" data-lang="en" aria-pressed="false">
-                        <i class="fas fa-language"></i> English
-                    </button>
-                </div>
-
                 <nav class="nav-links" aria-label="Main navigation">
-                    <a href="#" class="active"><i class="fas fa-home"></i> <span class="km-only">ទំព័រដើម</span><span class="en-only">Home</span></a>
-                    <a href="#features"><i class="fas fa-star"></i> <span class="km-only">លក្ខណៈពិសេស</span><span class="en-only">Features</span></a>
-                    <a href="#requirements"><i class="fas fa-microchip"></i> <span class="km-only">តម្រូវការ</span><span class="en-only">Requirements</span></a>
-                    <a href="#download"><i class="fas fa-download"></i> <span class="km-only">ទាញយក</span><span class="en-only">Download</span></a>
+                    <a href="#" class="active"><i class="fas fa-home"></i> Home</a>
+                    <a href="#features"><i class="fas fa-star"></i> Features</a>
+                    <a href="#requirements"><i class="fas fa-microchip"></i> Requirements</a>
+                    <a href="#download"><i class="fas fa-download"></i> Download</a>
                 </nav>
             </div>
         </header>
@@ -810,23 +744,16 @@
         <section class="hero">
             <div class="hero-badge">
                 <span class="dot-pulse"></span>
-                <span class="km-only">កំណែ v3.6.0 · ចេញថ្មីបំផុត</span>
-                <span class="en-only">v3.6.0 · Latest Release</span>
+                v3.6.0 · Latest Release
             </div>
 
             <h1>
-                <span class="km-only">កម្មវិធីបើកហ្គេម</span>
-                <span class="en-only">Ultimate Minecraft</span><br />
+                Ultimate Minecraft<br />
                 <span class="gold">Minecraft</span>
-                <span class="green km-only">ដ៏ល្អបំផុត</span>
-                <span class="green en-only">Launcher</span>
+                <span class="green">Launcher</span>
             </h1>
 
-            <p class="hero-sub km-only">
-                លឿន ស្រាល និងសម្បូរមុខងារ — Funan Launcher ផ្តល់នូវបទពិសោធន៍ Minecraft ល្អបំផុត
-                ជាមួយនឹងការគាំទ្រម៉ូដមួយចុច បង្កើនល្បឿន និងចំណុចប្រទាក់ស្អាត។
-            </p>
-            <p class="hero-sub en-only">
+            <p class="hero-sub">
                 Fast, lightweight, and feature-rich — Funan Launcher delivers the best Minecraft experience
                 with one-click mod support, performance optimization, and a clean interface.
             </p>
@@ -841,97 +768,79 @@
                         <div class="name">Funan_Launcher_v3.6.0.exe</div>
                         <div class="meta">
                             <span><i class="fas fa-hdd"></i> 20 MB</span>
-                            <span><i class="fab fa-windows"></i> <span class="km-only">វីនដូ</span><span class="en-only">Windows</span></span>
+                            <span><i class="fab fa-windows"></i> Windows</span>
                             <span><i class="fas fa-tag"></i> v3.6.0</span>
                         </div>
                     </div>
                 </div>
 
                 <a href="file/Funan_Launcher_v3.6.0.exe" download="Funan_Launcher_v3.6.0.exe" class="btn-download" id="downloadBtn">
-                    <span class="km-only">ទាញយកឥឡូវ</span>
-                    <span class="en-only">Download Now</span>
+                    Download Now
                     <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
 
             <!-- Old version link (subtle) -->
             <div class="old-version-wrap">
-                <span class="km-only"><i class="fas fa-history"></i> ទាញយកកំណែចាស់</span>
-                <span class="en-only"><i class="fas fa-history"></i> Download older version</span>
+                <i class="fas fa-history"></i> Download older version
                 <a href="file/Funan_Launcher_v3.3.0.exe" download="Funan_Launcher_v3.3.0.exe">v3.3.0</a>
             </div>
 
             <div class="hero-secure">
-                <span><i class="fas fa-shield-alt"></i> <span class="km-only">សុវត្ថិភាព ១០០%</span><span class="en-only">100% Secure</span></span>
-                <span><i class="fas fa-code"></i> <span class="km-only">កូដបើកចំហ</span><span class="en-only">Open Source</span></span>
-                <span><i class="fas fa-bug"></i> <span class="km-only">គ្មានមេរោគ</span><span class="en-only">Virus-Free</span></span>
+                <span><i class="fas fa-shield-alt"></i> 100% Secure</span>
+                <span><i class="fas fa-code"></i> Open Source</span>
+                <span><i class="fas fa-bug"></i> Virus-Free</span>
             </div>
         </section>
 
         <!-- ─── FEATURES ─── -->
         <section class="features" id="features">
             <div class="section-header">
-                <h2 class="km-only"><i class="fas fa-bolt" style="color:var(--accent-green);margin-right:8px;"></i> ហេតុអ្វីត្រូវប្រើ Funan Launcher?</h2>
-                <h2 class="en-only"><i class="fas fa-bolt" style="color:var(--accent-green);margin-right:8px;"></i> Why Funan Launcher?</h2>
-                <p class="km-only">អ្វីគ្រប់យ៉ាងដែលអ្នកត្រូវការដើម្បីចូលទៅកាន់ពិភព Minecraft</p>
-                <p class="en-only">Everything you need to enter the world of Minecraft</p>
+                <h2><i class="fas fa-bolt" style="color:var(--accent-green);margin-right:8px;"></i> Why Funan Launcher?</h2>
+                <p>Everything you need to enter the world of Minecraft</p>
             </div>
 
             <div class="features-grid">
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-rocket"></i></div>
-                    <h3 class="km-only">លឿនដូចផ្លេកបន្ទោរ</h3>
-                    <h3 class="en-only">Lightning Fast</h3>
-                    <p class="km-only">បង្កើនល្បឿនចាប់ផ្ដើម និងការប្រើប្រាស់អង្គចងចាំ — ចូលលេងបានក្នុងរយៈពេលប៉ុន្មានវិនាទី។</p>
-                    <p class="en-only">Boosted startup speed and memory efficiency — launch in seconds.</p>
+                    <h3>Lightning Fast</h3>
+                    <p>Boosted startup speed and memory efficiency — launch in seconds.</p>
                 </div>
 
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-puzzle-piece"></i></div>
-                    <h3 class="km-only">គ្រប់គ្រងម៉ូដ</h3>
-                    <h3 class="en-only">Mod Manager</h3>
-                    <p class="km-only">រកមើល ដំឡើង និងធ្វើបច្ចុប្បន្នភាពម៉ូដបានត្រឹមតែមួយចុចប៉ុណ្ណោះ។</p>
-                    <p class="en-only">Browse, install, and update mods with a single click.</p>
+                    <h3>Mod Manager</h3>
+                    <p>Browse, install, and update mods with a single click.</p>
                 </div>
 
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
-                    <h3 class="km-only">គាំទ្រគ្រប់កំណែ</h3>
-                    <h3 class="en-only">All Versions</h3>
-                    <p class="km-only">គាំទ្រគ្រប់កំណែ Minecraft ទាំងអស់ ចាប់ពី 1.8 រហូតដល់កំណែថ្មីបំផុត។</p>
-                    <p class="en-only">Supports all Minecraft versions from 1.8 to the latest.</p>
+                    <h3>All Versions</h3>
+                    <p>Supports all Minecraft versions from 1.8 to the latest.</p>
                 </div>
 
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-shield-halved"></i></div>
-                    <h3 class="km-only">សុវត្ថិភាព និងឯកជន</h3>
-                    <h3 class="en-only">Privacy First</h3>
-                    <p class="km-only">គ្មានការតាមដាន គ្មានកម្មវិធីហួសហេតុ — មានតែ Minecraft សុទ្ធសាធ។</p>
-                    <p class="en-only">No tracking, no bloatware — just pure Minecraft.</p>
+                    <h3>Privacy First</h3>
+                    <p>No tracking, no bloatware — just pure Minecraft.</p>
                 </div>
 
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-palette"></i></div>
-                    <h3 class="km-only">ប្ដូរស្បែកតួអង្គ</h3>
-                    <h3 class="en-only">Skin Customizer</h3>
-                    <p class="km-only">ផ្លាស់ប្ដូរស្បែក និង Cape របស់អ្នកបានយ៉ាងងាយស្រួល។</p>
-                    <p class="en-only">Easily swap your skin and cape with built-in tools.</p>
+                    <h3>Skin Customizer</h3>
+                    <p>Easily swap your skin and cape with built-in tools.</p>
                 </div>
 
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-chart-simple"></i></div>
-                    <h3 class="km-only">ស្ថិតិដំណើរការ</h3>
-                    <h3 class="en-only">Live Stats</h3>
-                    <p class="km-only">បង្ហាញ FPS ផ្ទាល់ ការប្រើប្រាស់ RAM និងគន្លឹះបង្កើនប្រសិទ្ធភាព។</p>
-                    <p class="en-only">Live FPS, RAM usage, and optimization tips.</p>
+                    <h3>Live Stats</h3>
+                    <p>Live FPS, RAM usage, and optimization tips.</p>
                 </div>
 
                 <div class="feature-item">
                     <div class="feature-icon"><i class="fas fa-comments"></i></div>
-                    <h3 class="km-only">វេទិកាជជែក</h3>
-                    <h3 class="en-only">In-Game Chat</h3>
-                    <p class="km-only">ភ្ជាប់ទំនាក់ទំនងជាមួយមិត្តភក្តិ និងជជែកគ្នាក្នុងហ្គេមបានយ៉ាងរលូន។</p>
-                    <p class="en-only">Connect with friends and chat seamlessly in-game.</p>
+                    <h3>In-Game Chat</h3>
+                    <p>Connect with friends and chat seamlessly in-game.</p>
                 </div>
             </div>
         </section>
@@ -939,30 +848,29 @@
         <!-- ─── REQUIREMENTS ─── -->
         <section class="requirements" id="requirements">
             <div class="section-header">
-                <h2 class="km-only"><i class="fas fa-microchip" style="color:var(--accent-green);margin-right:8px;"></i> តម្រូវការប្រព័ន្ធ</h2>
-                <h2 class="en-only"><i class="fas fa-microchip" style="color:var(--accent-green);margin-right:8px;"></i> System Requirements</h2>
+                <h2><i class="fas fa-microchip" style="color:var(--accent-green);margin-right:8px;"></i> System Requirements</h2>
             </div>
 
             <div class="req-grid">
                 <div class="req-item">
-                    <div class="label"><i class="fas fa-desktop" style="margin-right:4px;"></i> <span class="km-only">ប្រព័ន្ធ</span><span class="en-only">OS</span></div>
+                    <div class="label"><i class="fas fa-desktop" style="margin-right:4px;"></i> OS</div>
                     <div class="value">Windows 10 / 11</div>
                 </div>
                 <div class="req-item">
-                    <div class="label"><i class="fas fa-microchip" style="margin-right:4px;"></i> <span class="km-only">ខួរក្បាល</span><span class="en-only">CPU</span></div>
+                    <div class="label"><i class="fas fa-microchip" style="margin-right:4px;"></i> CPU</div>
                     <div class="value">Intel Core i3+</div>
                 </div>
                 <div class="req-item">
-                    <div class="label"><i class="fas fa-memory" style="margin-right:4px;"></i> <span class="km-only">អង្គចងចាំ</span><span class="en-only">RAM</span></div>
-                    <div class="value">4 GB <span style="color:var(--text-muted);font-weight:400;">(8 GB <span class="km-only">គួរតែ</span><span class="en-only">rec.</span>)</span></div>
+                    <div class="label"><i class="fas fa-memory" style="margin-right:4px;"></i> RAM</div>
+                    <div class="value">4 GB <span class="rec">(8 GB rec.)</span></div>
                 </div>
                 <div class="req-item">
-                    <div class="label"><i class="fas fa-display" style="margin-right:4px;"></i> <span class="km-only">កាតក្រាហ្វិក</span><span class="en-only">GPU</span></div>
+                    <div class="label"><i class="fas fa-display" style="margin-right:4px;"></i> GPU</div>
                     <div class="value">OpenGL 2.5+</div>
                 </div>
                 <div class="req-item">
-                    <div class="label"><i class="fas fa-database" style="margin-right:4px;"></i> <span class="km-only">ទំហំផ្ទុក</span><span class="en-only">Storage</span></div>
-                    <div class="value">500 MB+ <span class="km-only">ទំនេរ</span><span class="en-only">free</span></div>
+                    <div class="label"><i class="fas fa-database" style="margin-right:4px;"></i> Storage</div>
+                    <div class="value">500 MB+ free</div>
                 </div>
                 <div class="req-item">
                     <div class="label"><i class="fab fa-java" style="margin-right:4px;"></i> Java</div>
@@ -973,7 +881,7 @@
 
         <!-- ─── FOOTER ─── -->
         <footer>
-            <span>© 2026 Funan Launcher · <span class="km-only">បង្កើតឡើងសម្រាប់សហគមន៍</span><span class="en-only">Built for the community</span></span>
+            <span>© 2026 Funan Launcher · Built for the community</span>
             <div class="socials">
                 <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
                 <a href="#" aria-label="Discord"><i class="fab fa-discord"></i></a>
@@ -987,23 +895,17 @@
     <!-- ─── TOAST ─── -->
     <div class="toast" id="toast">
         <i class="fas fa-check-circle"></i>
-        <span id="toastMessage" class="km-only">កំពុងចាប់ផ្ដើមទាញយក...</span>
-        <span id="toastMessageEn" class="en-only" style="display:none;">Starting download...</span>
+        <span id="toastMessage">Starting download...</span>
     </div>
 
     <script>
         // ── DOM refs ──
         const toast = document.getElementById('toast');
-        const toastMsgKm = document.getElementById('toastMessage');
-        const toastMsgEn = document.getElementById('toastMessageEn');
+        const toastMsg = document.getElementById('toastMessage');
         let toastTimeout;
 
-        function showToast(msgKm, msgEn) {
-            toastMsgKm.textContent = msgKm;
-            toastMsgEn.textContent = msgEn;
-            const isKm = document.documentElement.classList.contains('lang-kh');
-            toastMsgKm.style.display = isKm ? 'inline' : 'none';
-            toastMsgEn.style.display = isKm ? 'none' : 'inline';
+        function showToast(msg) {
+            toastMsg.textContent = msg;
             toast.classList.add('show');
             clearTimeout(toastTimeout);
             toastTimeout = setTimeout(() => {
@@ -1011,63 +913,13 @@
             }, 3400);
         }
 
-        // ── Language Toggle ──
-        const langBtns = document.querySelectorAll('.lang-toggle-btn');
-        const htmlEl = document.documentElement;
-
-        // Set initial language (Khmer by default)
-        htmlEl.classList.add('lang-kh');
-
-        langBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const lang = this.dataset.lang;
-
-                // Update active state
-                langBtns.forEach(b => {
-                    b.classList.remove('active');
-                    b.setAttribute('aria-pressed', 'false');
-                });
-                this.classList.add('active');
-                this.setAttribute('aria-pressed', 'true');
-
-                // Update root class
-                htmlEl.classList.remove('lang-kh', 'lang-en');
-                htmlEl.classList.add('lang-' + lang);
-
-                // Update toast visibility
-                const isKm = lang === 'km';
-                toastMsgKm.style.display = isKm ? 'inline' : 'none';
-                toastMsgEn.style.display = isKm ? 'none' : 'inline';
-
-                // Store preference
-                localStorage.setItem('funan-lang', lang);
-            });
-        });
-
-        // Restore language preference
-        const savedLang = localStorage.getItem('funan-lang');
-        if (savedLang && (savedLang === 'km' || savedLang === 'en')) {
-            const targetBtn = document.querySelector(`.lang-toggle-btn[data-lang="${savedLang}"]`);
-            if (targetBtn) {
-                targetBtn.click();
-            }
-        }
-
         // ── Download Button ──
         const downloadBtn = document.getElementById('downloadBtn');
         downloadBtn.addEventListener('click', function(e) {
-            const isKm = htmlEl.classList.contains('lang-kh');
-            if (isKm) {
-                showToast('⏳ កំពុងចាប់ផ្ដើមទាញយក...', '⏳ Starting download...');
-                setTimeout(() => {
-                    showToast('✅ កំពុងទាញយក! សូមពិនិត្យមើលកម្មវិធីរុករករបស់អ្នក។', '✅ Downloading! Check your browser.');
-                }, 700);
-            } else {
-                showToast('⏳ Starting download...', '⏳ Starting download...');
-                setTimeout(() => {
-                    showToast('✅ Downloading! Check your browser.', '✅ Downloading! Check your browser.');
-                }, 700);
-            }
+            showToast('⏳ Starting download...');
+            setTimeout(() => {
+                showToast('✅ Downloading! Check your browser.');
+            }, 700);
         });
 
         // ── Smooth scroll for nav links ──
@@ -1080,7 +932,6 @@
                     if (target) {
                         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     }
-                    // Update active state
                     document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
                     link.classList.add('active');
                 }
@@ -1113,4 +964,3 @@
 
 </body>
 </html>
-```
